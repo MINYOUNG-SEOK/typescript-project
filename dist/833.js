@@ -1,0 +1,2 @@
+"use strict";(self.webpackChunkspotify_demo=self.webpackChunkspotify_demo||[]).push([[833],{833:(s,e,d)=>{d.r(e),d.d(e,{default:()=>a}),d(540);var i=d(647),t=d(848);const a=()=>(0,t.jsxs)("div",{children:["Sidebar",(0,t.jsx)(i.sv,{})]})}}]);
+//# sourceMappingURL=833.js.map?ver=649602ca5147460e97df
