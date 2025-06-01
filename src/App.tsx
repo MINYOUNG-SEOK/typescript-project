@@ -1,25 +1,28 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { Suspense } from 'react';
+import { Routes, Route } from 'react-router-dom';
+import LoadingSpinner from './common/components/LoadingSpinner';
+const AppLayout = React.lazy(() => import('./layout/AppLayout'))
+const HomePage = React.lazy(() => import("./pages/HomePage/HomePage"))
+const SearchPage = React.lazy(() => import("./pages/SearchPage/SearchPage"))
+const SearchResultPage = React.lazy(() => import("./pages/SearchResultPage/SearchResultPage"))
+const PlaylistPage = React.lazy(() => import("./pages/PlaylistPage/PlaylistPage"))
+const PlaylistDetailPage = React.lazy(() => import("./pages/PlaylistDetailPage/PlaylistDetailPage"))
+
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Suspense fallback={<LoadingSpinner />}>
+      <Routes>
+        <Route path="/" element={<AppLayout />}>
+          <Route index element={<HomePage />} />
+          <Route path="search" element={<SearchPage />} />
+          <Route path="search/:keyword" element={<SearchResultPage />} />
+          <Route path="playlist" element={<PlaylistPage />} />
+          <Route path="playlist/:id" element={<PlaylistDetailPage />} />
+
+        </Route>
+      </Routes>
+    </Suspense>
   );
 }
 
