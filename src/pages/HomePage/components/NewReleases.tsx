@@ -35,7 +35,7 @@ const NewReleases = () => {
                 >
                     최신 발매
                 </Typography>
-                <img
+                {/* <img
                     src="/btn-more.svg"
                     alt="more"
                     style={{
@@ -43,7 +43,7 @@ const NewReleases = () => {
                         height: 20,
                         cursor: "pointer"
                     }}
-                />
+                /> */}
             </Box>
 
             {/* 앨범 리스트 */}
