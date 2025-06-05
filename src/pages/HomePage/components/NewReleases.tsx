@@ -36,7 +36,7 @@ const NewReleases = () => {
                     최신 발매
                 </Typography>
                 <img
-                    src="./btn-more.svg"
+                    src="/btn-more.svg"
                     alt="more"
                     style={{
                         width: 20,
@@ -58,7 +58,7 @@ const NewReleases = () => {
                     data?.albums.items.map((album) => (
                         <Grid size={{ xs: 6, sm: 4, md: 3, lg: 2 }} key={album.id}>
                             <Card
-                                image={album.images?.[0]?.url || './no-image.png'}
+                                image={album.images?.[0]?.url || '/no-image.jpg'}
                                 name={album.name}
                                 artistName={album.artists?.[0]?.name}
                             />
