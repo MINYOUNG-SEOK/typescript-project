@@ -1,6 +1,7 @@
 import { Box, Typography } from '@mui/material';
 import PlayButton from './PlayButton';
-import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
+import fallbackImage from '../../assets/no-image.jpg';
+
 
 interface CardProps {
     image: string;
@@ -10,7 +11,6 @@ interface CardProps {
 
 
 const Card = ({ image, name, artistName }: CardProps) => {
-    const fallbackImage = "/no-image.jpg";
 
     return (
         <Box

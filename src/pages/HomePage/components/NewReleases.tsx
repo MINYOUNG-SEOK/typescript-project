@@ -4,6 +4,8 @@ import React from 'react'
 import ErrorMessage from '../../../common/components/ErrorMessage';
 import Card from '../../../common/components/Card';
 import SkeletonCard from '../../../common/components/SkeletonCard';
+import btnMoreIcon from '../../../assets/btn-more.svg'
+
 
 const NewReleases = () => {
     const { data, error, isLoading } = useGetNewReleases();
@@ -35,15 +37,11 @@ const NewReleases = () => {
                 >
                     최신 발매
                 </Typography>
-                {/* <img
-                    src="/btn-more.svg"
+                <img
+                    src={btnMoreIcon}
                     alt="more"
-                    style={{
-                        width: 20,
-                        height: 20,
-                        cursor: "pointer"
-                    }}
-                /> */}
+                    style={{ width: 20, height: 20, cursor: "pointer" }}
+                />
             </Box>
 
             {/* 앨범 리스트 */}
@@ -58,7 +56,7 @@ const NewReleases = () => {
                     data?.albums.items.map((album) => (
                         <Grid size={{ xs: 6, sm: 4, md: 3, lg: 2 }} key={album.id}>
                             <Card
-                                image={album.images?.[0]?.url || '/no-image.jpg'}
+                                image={album.images?.[0]?.url}
                                 name={album.name}
                                 artistName={album.artists?.[0]?.name}
                             />

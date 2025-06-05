@@ -8,6 +8,7 @@ import {
     useMediaQuery,
     Drawer,
     IconButton,
+    ButtonBase,
 } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
 import HomeIcon from '@mui/icons-material/Home';
@@ -131,9 +132,21 @@ const AppLayout = () => {
                             <MenuIcon />
                         </IconButton>
                     ) : (
-                        <Typography fontSize="1.1rem" fontWeight={700}>
-                            Lime Music
-                        </Typography>
+                        <ButtonBase
+                            component={NavLink}
+                            to="/"
+                            sx={{
+                                textDecoration: 'none',
+                                color: 'inherit',
+                                '&.active': {
+                                    color: 'inherit',
+                                },
+                            }}
+                        >
+                            <Typography fontSize="1.1rem" fontWeight={700}>
+                                Lime Music
+                            </Typography>
+                        </ButtonBase>
                     )}
                 </Box>
 
