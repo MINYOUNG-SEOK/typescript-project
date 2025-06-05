@@ -21,11 +21,22 @@ const NewReleases = () => {
         <div>
             {/* 헤더 + 버튼 아이콘 */}
             <Box display="flex" alignItems="center" padding="24px 0" gap={1}>
-                <Typography variant="h5" fontWeight="bold">
+                <Typography
+                    variant="h5"
+                    fontWeight="bold"
+                    sx={{
+                        fontSize: {
+                            xs: '1.2rem',
+                            sm: '1.3rem',
+                            md: '1.4rem',
+                            lg: '1.5rem',
+                        }
+                    }}
+                >
                     최신 발매
                 </Typography>
                 <img
-                    src="/btn-more.svg"
+                    src="./btn-more.svg"
                     alt="more"
                     style={{
                         width: 20,
@@ -47,7 +58,7 @@ const NewReleases = () => {
                     data?.albums.items.map((album) => (
                         <Grid size={{ xs: 6, sm: 4, md: 3, lg: 2 }} key={album.id}>
                             <Card
-                                image={album.images?.[0]?.url || '/no-image.png'}
+                                image={album.images?.[0]?.url || './no-image.png'}
                                 name={album.name}
                                 artistName={album.artists?.[0]?.name}
                             />
