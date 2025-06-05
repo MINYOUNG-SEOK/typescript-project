@@ -1,124 +1,176 @@
-import React from 'react';
-import { Outlet } from "react-router-dom";
-import { Box, Typography, styled, Button } from '@mui/material';
-import { NavLink } from 'react-router-dom';
+import React, { useState } from 'react';
+import { Outlet, NavLink } from 'react-router-dom';
+import {
+    Box,
+    Typography,
+    styled,
+    Button,
+    useMediaQuery,
+    Drawer,
+    IconButton,
+} from '@mui/material';
+import MenuIcon from '@mui/icons-material/Menu';
 import HomeIcon from '@mui/icons-material/Home';
 import SearchIcon from '@mui/icons-material/Search';
 import LibraryMusicIcon from '@mui/icons-material/LibraryMusic';
-import AddIcon from '@mui/icons-material/Add';
 
-const Layout = styled("div")({
-    display: "flex",
-    height: "100vh",
-    padding: "8px",
+const Layout = styled('div')({
+    display: 'flex',
+    height: '100vh',
+    backgroundColor: '#f9f9f9',
 });
 
-const Sidebar = styled("div")(({ theme }) => ({
-    width: "331px",
-    height: "100%",
-    display: "flex",
-    flexDirection: "column",
-    gap: "8px",
-    [theme.breakpoints.down("sm")]: {
-        display: "none",
-    },
-}));
+const Sidebar = styled('aside')({
+    width: 280,
+    height: '100%',
+    display: 'flex',
+    flexDirection: 'column',
+    backgroundColor: '#ffffff',
+    borderRight: '1px solid #ddd',
+    padding: '20px 16px',
+    boxSizing: 'border-box',
+});
 
-const Panel = styled(Box)(({ theme }) => ({
-    borderRadius: "8px",
-    backgroundColor: theme.palette.background.paper,
-    color: theme.palette.text.primary,
-    padding: "16px",
-}));
+const SidebarTitle = styled(Typography)({
+    fontSize: '1.4rem',
+    fontWeight: 700,
+    marginBottom: '24px',
+});
 
-const NavList = styled("ul")({
-    listStyle: "none",
+const NavList = styled('ul')({
+    listStyle: 'none',
     padding: 0,
     margin: 0,
-    display: "flex",
-    flexDirection: "column",
-    gap: "16px",
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '16px',
 });
 
 const StyledNavLink = styled(NavLink)(({ theme }) => ({
-    textDecoration: "none",
-    display: "flex",
-    alignItems: "center",
-    gap: "20px",
-    color: theme.palette.text.secondary,
-    "&:hover, &.active": {
-        color: theme.palette.text.primary,
+    textDecoration: 'none',
+    display: 'flex',
+    alignItems: 'center',
+    gap: '16px',
+    fontSize: '0.95rem',
+    color: '#222',
+    padding: '10px 14px',
+    borderRadius: '8px',
+    '&.active': {
+        backgroundColor: '#f2f2f2',
+        color: theme.palette.primary.main,
+    },
+    '&:hover': {
+        backgroundColor: '#f2f2f2',
     },
 }));
 
-const LibraryHeader = styled(Box)({
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "space-between",
-    marginBottom: "16px",
+const Header = styled('header')({
+    position: 'fixed',
+    top: 0,
+    left: 0,
+    right: 0,
+    height: 64,
+    backgroundColor: '#ffffff',
+    borderBottom: '1px solid #e5e5e5',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    padding: '0 24px',
+    zIndex: 1100,
 });
 
-const PlaylistCard = styled(Box)(({ theme }) => ({
-    borderRadius: "8px",
-    backgroundColor: "rgba(255, 255, 255, 0.05)",
-    padding: "16px",
-    color: "#fff",
-
-}));
+const Main = styled('main')({
+    flex: 1,
+    marginTop: 64,
+    padding: '24px',
+    overflowY: 'auto',
+    backgroundColor: '#fff',
+});
 
 const AppLayout = () => {
+    const isMobile = useMediaQuery('(max-width:900px)');
+    const [open, setOpen] = useState(false);
+    const toggleSidebar = () => setOpen((prev) => !prev);
+
+    const SidebarContent = (
+        <Sidebar>
+            <SidebarTitle>Lime Music</SidebarTitle>
+            <NavList>
+                <li>
+                    <StyledNavLink to="/" end onClick={() => setOpen(false)}>
+                        <HomeIcon fontSize="small" sx={{ color: '#1db954' }} />
+                        홈
+                    </StyledNavLink>
+                </li>
+                <li>
+                    <StyledNavLink to="/search" onClick={() => setOpen(false)}>
+                        <SearchIcon fontSize="small" sx={{ color: '#1db954' }} />
+                        검색하기
+                    </StyledNavLink>
+                </li>
+                <li>
+                    <StyledNavLink to="/playlist" onClick={() => setOpen(false)}>
+                        <LibraryMusicIcon fontSize="small" sx={{ color: '#1db954' }} />
+                        나의 플레이 리스트
+                    </StyledNavLink>
+                </li>
+            </NavList>
+        </Sidebar>
+    );
+
     return (
         <Layout>
-            <Sidebar>
-                <Panel>
-                    <NavList>
-                        <li>
-                            <StyledNavLink to="/" end>
-                                <HomeIcon />
-                                <Typography variant="body1" fontWeight={700}>Home</Typography>
-                            </StyledNavLink>
-                        </li>
-                        <li>
-                            <StyledNavLink to="/search">
-                                <SearchIcon />
-                                <Typography variant="body1" fontWeight={700}>Search</Typography>
-                            </StyledNavLink>
-                        </li>
-                    </NavList>
-                </Panel>
+            {/* PC 전용 사이드바 */}
+            {!isMobile && SidebarContent}
 
-                <Panel>
-                    <LibraryHeader>
-                        <Box display="flex" alignItems="center" gap="20px">
-                            <LibraryMusicIcon />
-                            <Typography variant="body1" fontWeight={700}>Your Library</Typography>
-                        </Box>
-                        <AddIcon
-                            sx={{
-                                color: "#fb5b82",
-                                cursor: "pointer",
-                                "&:hover": {
-                                    color: "#fc9272",
-                                },
-                            }}
-                        />
-                    </LibraryHeader>
-
-                    <PlaylistCard>
-                        <Typography fontWeight={700} sx={{ fontSize: "1rem" }}>
-                            Create your first playlist
+            {/* 헤더 */}
+            <Header>
+                <Box display="flex" alignItems="center" gap={1}>
+                    {isMobile ? (
+                        <IconButton onClick={toggleSidebar}>
+                            <MenuIcon />
+                        </IconButton>
+                    ) : (
+                        <Typography fontSize="1.1rem" fontWeight={700}>
+                            Lime Music
                         </Typography>
-                        <Typography variant="body2" sx={{ mb: 2 }}>
-                            It's easy, we'll help you
-                        </Typography>
-                        <Button variant="contained" color="secondary" sx={{ borderRadius: "999px", textTransform: "none", fontWeight: 700 }}>
-                            Create playlist
-                        </Button>
-                    </PlaylistCard>
-                </Panel>
-            </Sidebar>
+                    )}
+                </Box>
 
-            <Outlet />
+                <Button
+                    variant="contained"
+                    sx={{
+                        backgroundColor: '#1db954',
+                        color: '#fff',
+                        fontWeight: 600,
+                        borderRadius: 999,
+                        textTransform: 'none',
+                        px: 3,
+                        boxShadow: 'none',
+                        '&:hover': {
+                            backgroundColor: '#17a74a',
+                            boxShadow: 'none',
+                        },
+                    }}
+                >
+                    로그인
+                </Button>
+            </Header>
+
+            {/* 모바일 전용 Drawer */}
+            <Drawer
+                anchor="left"
+                open={open}
+                onClose={toggleSidebar}
+                ModalProps={{ keepMounted: true }}
+            >
+                {SidebarContent}
+            </Drawer>
+
+            {/* Main */}
+            <Main>
+                <Outlet />
+            </Main>
         </Layout>
     );
 };

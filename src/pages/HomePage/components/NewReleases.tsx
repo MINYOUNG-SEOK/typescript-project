@@ -1,9 +1,9 @@
-import { Grid, Typography } from '@mui/material'
+import { Box, Grid, Typography } from '@mui/material'
 import useGetNewReleases from '../../../hooks/useGetNewReleases'
 import React from 'react'
-import LoadingSpinner from '../../../common/components/LoadingSpinner';
 import ErrorMessage from '../../../common/components/ErrorMessage';
 import Card from '../../../common/components/Card';
+import SkeletonCard from '../../../common/components/SkeletonCard';
 
 const NewReleases = () => {
     const { data, error, isLoading } = useGetNewReleases();
@@ -14,32 +14,53 @@ const NewReleases = () => {
         }
     }, [data]);
 
-    if (isLoading) {
-        return <LoadingSpinner />
-    }
     if (error) {
         return <ErrorMessage errorMessage={error.message} />
     }
     return (
         <div>
-            <Typography variant="h1" paddingTop="8px">
-                New Released Albums
-            </Typography>
-            {data && data.albums.items.length > 0 ? (
-                <Grid container spacing={2}>
-                    {data.albums.items.map((album) => (
-                        <Grid size={{ xs: 6, sm: 4, md: 2 }} key={album.id}>
+            {/* 헤더 + 버튼 아이콘 */}
+            <Box display="flex" alignItems="center" padding="24px 0" gap={1}>
+                <Typography variant="h5" fontWeight="bold">
+                    최신 발매
+                </Typography>
+                <img
+                    src="/btn-more.svg"
+                    alt="more"
+                    style={{
+                        width: 20,
+                        height: 20,
+                        cursor: "pointer"
+                    }}
+                />
+            </Box>
+
+            {/* 앨범 리스트 */}
+            <Grid container spacing={2}>
+                {isLoading ? (
+                    Array.from({ length: 6 }).map((_, idx) => (
+                        <Grid size={{ xs: 6, sm: 4, md: 3, lg: 2 }} key={idx}>
+                            <SkeletonCard />
+                        </Grid>
+                    ))
+                ) : data && data.albums.items.length > 0 ? (
+                    data?.albums.items.map((album) => (
+                        <Grid size={{ xs: 6, sm: 4, md: 3, lg: 2 }} key={album.id}>
                             <Card
-                                image={album.images[0].url}
+                                image={album.images?.[0]?.url || '/no-image.png'}
                                 name={album.name}
-                                artistName={album.artists[0].name}
+                                artistName={album.artists?.[0]?.name}
                             />
                         </Grid>
-                    ))}
-                </Grid>
-            ) : (
-                <Typography variant="h2">No Data</Typography>
-            )}
+                    ))
+                ) : (
+                    <Grid size={{ xs: 12 }}>
+                        <Typography variant="body1" color="text.secondary">
+                            데이터가 없습니다.
+                        </Typography>
+                    </Grid>
+                )}
+            </Grid>
         </div>
     );
 };
