@@ -81,6 +81,8 @@ module.exports = (env, argv) => {
         template: path.resolve(__dirname, "src", "index.html"),
       }),
       new Dotenv({
+        path: isProduction ? ".env.production" : ".env.development",
+        defaults: ".env",
         allowEmptyValues: true,
         systemvars: true,
       }),

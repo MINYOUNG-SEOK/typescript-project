@@ -1,10 +1,10 @@
 import { useQuery } from "@tanstack/react-query"
-import { getClientCredientialToken } from "../apis/authApi"
+import { getClientCredentialToken } from "../apis/authApi"
 
 const useClientCredentialToken = (): string | undefined => {
     const { data } = useQuery({
         queryKey: ['client-credential=token'],
-        queryFn: getClientCredientialToken
+        queryFn: getClientCredentialToken
     })
     const ClientCredentialToken = data?.access_token
     return ClientCredentialToken;

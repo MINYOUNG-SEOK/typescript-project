@@ -14,6 +14,7 @@ import MenuIcon from '@mui/icons-material/Menu';
 import HomeIcon from '@mui/icons-material/Home';
 import SearchIcon from '@mui/icons-material/Search';
 import LibraryMusicIcon from '@mui/icons-material/LibraryMusic';
+import LoginButton from '../common/components/LoginButton';
 
 const Layout = styled('div')({
     display: 'flex',
@@ -150,24 +151,7 @@ const AppLayout = () => {
                     )}
                 </Box>
 
-                <Button
-                    variant="contained"
-                    sx={{
-                        backgroundColor: '#1db954',
-                        color: '#fff',
-                        fontWeight: 600,
-                        borderRadius: 999,
-                        textTransform: 'none',
-                        px: 3,
-                        boxShadow: 'none',
-                        '&:hover': {
-                            backgroundColor: '#17a74a',
-                            boxShadow: 'none',
-                        },
-                    }}
-                >
-                    로그인
-                </Button>
+                <LoginButton />
             </Header>
 
             {/* 모바일 전용 Drawer */}
