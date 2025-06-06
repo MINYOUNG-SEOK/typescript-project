@@ -17,6 +17,7 @@ const useExchangeToken = (
     mutationFn: ({ code, codeVerifier }) => exchangeToken(code, codeVerifier),
     onSuccess: (data, variables, context) => {
       localStorage.setItem('access_token', data.access_token);
+      localStorage.removeItem('code_verifier');
       options?.onSuccess?.(data, variables, context);
     },
     onError: (err, variables, context) => {
