@@ -20,12 +20,20 @@ const CallbackPage = () => {
     const code = params.get('code');
     const initialCodeVerifier = localStorage.getItem('code_verifier');
 
+    console.log('콜백 useEffect 실행', { code, codeVerifier: initialCodeVerifier });
+
+    const existingAccessToken = localStorage.getItem('access_token');
+    if (existingAccessToken) {
+      console.log('이미 access_token이 존재하여 홈으로 이동합니다.');
+      navigate('/');
+      return;
+    }
 
     if (code && initialCodeVerifier) {
+      console.log('exchangeToken 호출', { code, codeVerifier: initialCodeVerifier });
       exchangeToken({ code, codeVerifier: initialCodeVerifier });
     } else {
       console.error("로그인에 필요한 정보가 부족합니다.", { code, codeVerifier: initialCodeVerifier });
-      navigate('/login');
     }
   }, [location, exchangeToken, navigate]);
 
