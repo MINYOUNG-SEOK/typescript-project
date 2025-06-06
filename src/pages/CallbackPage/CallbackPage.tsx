@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import useExchangeToken from '../../hooks/useExchangeToken';
+import LoadingSpinner from '../../common/components/LoadingSpinner';
 
 const CallbackPage = () => {
   const location = useLocation();
@@ -19,12 +20,8 @@ const CallbackPage = () => {
     const params = new URLSearchParams(location.search);
     const code = params.get('code');
     const initialCodeVerifier = localStorage.getItem('code_verifier');
-
-    console.log('콜백 useEffect 실행', { code, codeVerifier: initialCodeVerifier });
-
     const existingAccessToken = localStorage.getItem('access_token');
     if (existingAccessToken) {
-      console.log('이미 access_token이 존재하여 홈으로 이동합니다.');
       navigate('/');
       return;
     }
@@ -37,7 +34,7 @@ const CallbackPage = () => {
     }
   }, [location, exchangeToken, navigate]);
 
-  return <div>로그인 처리 중...</div>;
+  return <LoadingSpinner />;
 };
 
 export default CallbackPage; 
