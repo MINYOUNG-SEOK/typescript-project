@@ -1,21 +1,30 @@
-import { useMutation } from "@tanstack/react-query"
+import { useMutation, UseMutationOptions } from "@tanstack/react-query"
 import { exchangeToken } from "../apis/authApi"
 import { ExchangeTokenResponse } from "../models/auth";
 
-const useExchangeToken = () => {
-    return useMutation<
-        ExchangeTokenResponse,
-        Error,
-        { code: string; codeVerifier: string }
-    >({
-        mutationFn: ({ code, codeVerifier }) => exchangeToken(code, codeVerifier),
-        onSuccess: (data) => {
-            localStorage.setItem('access_token', data.access_token);
-        },
-        onError: (err) => {
-            console.error("토큰 교환 실패:", err);
-        }
-    });
+const useExchangeToken = (
+  options?: UseMutationOptions<
+    ExchangeTokenResponse,
+    Error,
+    { code: string; codeVerifier: string }
+  >
+) => {
+  return useMutation<
+    ExchangeTokenResponse,
+    Error,
+    { code: string; codeVerifier: string }
+  >({
+    mutationFn: ({ code, codeVerifier }) => exchangeToken(code, codeVerifier),
+    onSuccess: (data, variables, context) => {
+      localStorage.setItem('access_token', data.access_token);
+      options?.onSuccess?.(data, variables, context);
+    },
+    onError: (err, variables, context) => {
+      console.error("토큰 교환 실패:", err);
+      options?.onError?.(err, variables, context);
+    },
+    ...options,
+  });
 };
 
 export default useExchangeToken;

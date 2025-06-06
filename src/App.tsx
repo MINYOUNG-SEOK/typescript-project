@@ -10,7 +10,6 @@ const SearchResultPage = React.lazy(() => import("./pages/SearchResultPage/Searc
 const PlaylistPage = React.lazy(() => import("./pages/PlaylistPage/PlaylistPage"))
 const PlaylistDetailPage = React.lazy(() => import("./pages/PlaylistDetailPage/PlaylistDetailPage"))
 
-
 function App() {
   const urlParams = new URLSearchParams(window.location.search);
   let code = urlParams.get('code');

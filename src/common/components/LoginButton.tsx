@@ -3,8 +3,8 @@ import React from 'react'
 import { getSpotifyAuthUrl } from '../../utils/auth'
 
 const LoginButton = () => {
-    const login = () => {
-        getSpotifyAuthUrl()
+    const login = async () => {
+        await getSpotifyAuthUrl();
     }
 
     return (
