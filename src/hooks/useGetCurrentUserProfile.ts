@@ -10,9 +10,7 @@ const useGetCurrentUserProfile = (): UseQueryResult<User, Error> => {
         queryKey: ["current-user-profile", accessToken],
         queryFn: getGetCurrentUserProfile,
         enabled: !!accessToken,
-        staleTime: 1000 * 60 * 5,
-        refetchOnMount: false,
-        refetchOnWindowFocus: false,
+        staleTime: 0,
     })
 }
 
