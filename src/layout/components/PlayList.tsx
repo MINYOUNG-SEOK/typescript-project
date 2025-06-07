@@ -62,7 +62,15 @@ const PlayList: React.FC<PlaylistListProps> = ({
                 page.items.map((pl: any, idx: number, arr: any[]) => {
                     const isLast = idx === arr.length - 1;
                     return (
-                        <li key={pl.id} ref={isLast ? ref : null}>
+                        <li
+                            key={pl.id}
+                            ref={isLast ? ref : null}
+                            style={{
+                                borderBottom: "1px solid #d9d9d9",
+                                paddingBottom: "8px",
+                                paddingTop: "8px",
+                            }}
+                        >
                             <StyledLink
                                 to={`/playlist/${pl.id}`}
                                 onClick={onClose}
