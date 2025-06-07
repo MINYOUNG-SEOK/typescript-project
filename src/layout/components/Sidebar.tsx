@@ -135,7 +135,11 @@ const Sidebar: React.FC<SidebarProps> = ({ open, onClose }) => {
                         !accessToken ? (
                             <Typography
                                 variant="body2"
-                                sx={{ color: "text.secondary", px: 2, mt: 1 }}
+                                sx={{
+                                    color: "text.secondary",
+                                    mt: 1,
+                                    pl: "48px",
+                                }}
                             >
                                 아직 회원이 아니신가요?
                                 <br />
@@ -159,7 +163,7 @@ const Sidebar: React.FC<SidebarProps> = ({ open, onClose }) => {
                                 불러오기 실패
                             </Typography>
                         ) : (
-                            <PlaylistList style={{ paddingLeft: "24px" }}>
+                            <PlaylistList style={{ paddingLeft: "34px" }}>
                                 {data?.items.map((pl) => (
                                     <li key={pl.id}>
                                         <StyledLink to={`/playlist/${pl.id}`} onClick={onClose}>
