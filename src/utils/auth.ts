@@ -1,4 +1,3 @@
-// src/auth/auth.ts
 import { AuthUrlParams } from "models/auth";
 import { base64encode, generateRandomString, sha256 } from "../utils/crypto";
 import { CLIENT_ID } from "../configs/authConfig";
