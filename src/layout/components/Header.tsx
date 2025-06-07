@@ -1,4 +1,3 @@
-// src/layout/components/Header.tsx
 import React, { useState } from 'react';
 import { NavLink } from 'react-router-dom';
 import { styled } from '@mui/material/styles';
@@ -86,8 +85,11 @@ const Header: React.FC<HeaderProps> = ({ isMobile, toggleSidebar }) => {
                     <Avatar
                         src={userProfile?.images?.[0]?.url}
                         alt={userProfile?.display_name ?? 'User'}
-                        sx={{ width: 40, height: 40 }}
                         onClick={handleMenuOpen}
+                        sx={{
+                            width: { xs: 30, sm: 35, md: 40 },
+                            height: { xs: 30, sm: 35, md: 40 },
+                        }}
                     />
                     <Menu
                         anchorEl={anchorEl}
@@ -99,7 +101,7 @@ const Header: React.FC<HeaderProps> = ({ isMobile, toggleSidebar }) => {
                         slotProps={{
                             paper: {
                                 sx: {
-                                    minWidth: 200,
+                                    minWidth: { xs: 150, sm: 200, md: 240 },
                                     py: 0,
                                     '& .MuiList-root': { pt: 0, pb: 0 },
                                 }
