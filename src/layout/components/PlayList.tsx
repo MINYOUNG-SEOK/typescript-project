@@ -94,6 +94,7 @@ const PlayList: React.FC<PlaylistListProps> = ({
                     );
                 })
             )}
+            <li style={{ height: "30px" }} aria-hidden="true" />
             {isFetchingNextPage && (
                 <div style={{ display: "flex", justifyContent: "center", padding: "16px 0" }}>
                     <CircularProgress size={24}
