@@ -37,7 +37,7 @@ const ScrollableSection = styled("div")({
 });
 
 const Title = styled(Typography)({
-    fontSize: "1.4rem",
+    fontSize: "1.2rem",
     fontWeight: 700,
     marginBottom: "24px",
 });
@@ -56,7 +56,7 @@ const StyledLink = styled(NavLink)(({ theme }) => ({
     display: "flex",
     alignItems: "center",
     gap: "16px",
-    fontSize: "1.05rem",
+    fontSize: "1rem",
     color: "#222",
     padding: "10px 14px",
     borderRadius: "4px",
@@ -76,7 +76,7 @@ const StyledNavItem = styled("div")({
     display: "flex",
     alignItems: "center",
     gap: "16px",
-    fontSize: "1.05rem",
+    fontSize: "1rem",
     color: "#222",
     padding: "10px 14px",
     borderRadius: "4px",
@@ -131,19 +131,19 @@ const Sidebar: React.FC<SidebarProps> = ({ open, onClose }) => {
                     <li>
                         <StyledLink to="/" end onClick={onClose}>
                             <HomeIcon fontSize="small" sx={{ color: "#1db954" }} />
-                            <Typography fontSize="1.05rem" fontWeight={500}>홈</Typography>
+                            <Typography fontSize="1rem" fontWeight={500}>홈</Typography>
                         </StyledLink>
                     </li>
                     <li>
                         <StyledLink to="/search" onClick={onClose}>
                             <SearchIcon fontSize="small" sx={{ color: "#1db954" }} />
-                            <Typography fontSize="1.05rem" fontWeight={500}>검색하기</Typography>
+                            <Typography fontSize="1rem" fontWeight={500}>검색하기</Typography>
                         </StyledLink>
                     </li>
                     <li>
                         <StyledNavItem onClick={() => setIsPlaylistOpen((prev) => !prev)}>
                             <LibraryMusicIcon fontSize="medium" sx={{ color: "#1db954" }} />
-                            <Typography fontSize="1.05rem" fontWeight={500}>
+                            <Typography fontSize="1rem" fontWeight={500}>
                                 나의 플레이리스트
                             </Typography>
                             <motion.div

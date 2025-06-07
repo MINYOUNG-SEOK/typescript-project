@@ -74,7 +74,7 @@ const Header: React.FC<HeaderProps> = ({ isMobile, toggleSidebar }) => {
                             to="/"
                             sx={{ textDecoration: 'none', color: 'inherit', '&.active': { color: 'inherit' } }}
                         >
-                            <Typography fontSize="1.1rem" fontWeight={700}>Lime Music</Typography>
+                            <Typography fontSize="1.4rem" fontWeight={700}>Lime Music</Typography>
                         </ButtonBase>
                     )
                 }
