@@ -1,16 +1,9 @@
+import { ApiResponse } from "./apiResponse";
 import { Artist } from "./artist";
 import { ExternalUrls, Restriction, SpotifyImage } from "./commonType";
 
 export interface GetNewReleasesResponse {
-    albums: {
-        href: string;
-        limit: number;
-        next: string;
-        offset: number;
-        previous: string | null;
-        total: number;
-        items: SimplifiedAlbum[];
-    }
+    albums: ApiResponse<SimplifiedAlbum>;
 }
 
 export interface SimplifiedAlbum {

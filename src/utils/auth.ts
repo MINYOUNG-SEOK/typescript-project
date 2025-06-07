@@ -1,6 +1,6 @@
 import { AuthUrlParams } from "models/auth";
 import { base64encode, generateRandomString, sha256 } from "../utils/crypto";
-import { CLIENT_ID } from "../configs/authConfig";
+import { CLIENT_ID, SCOPES } from "../configs/authConfig";
 import { REDIRECT_URI } from "../configs/commonConfig";
 
 const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
@@ -19,7 +19,7 @@ export const getSpotifyAuthUrl = async () => {
     const params: AuthUrlParams = {
         response_type: 'code',
         client_id: CLIENT_ID,
-        scope: 'user-read-private user-read-email',
+        scope: SCOPES,
         code_challenge_method: 'S256',
         code_challenge: codeChallenge,
         redirect_uri: REDIRECT_URI,
