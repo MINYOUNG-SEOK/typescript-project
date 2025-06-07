@@ -1,23 +1,39 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { NavLink } from "react-router-dom";
-import { styled, Typography, Drawer, useMediaQuery } from "@mui/material";
+import {
+    styled,
+    Typography,
+    Drawer,
+    useMediaQuery,
+} from "@mui/material";
 import HomeIcon from "@mui/icons-material/Home";
 import SearchIcon from "@mui/icons-material/Search";
 import LibraryMusicIcon from "@mui/icons-material/LibraryMusic";
-import useGetCurrentUserPlaylists from "../../hooks/useGetCurrentUserPlaylists";
+import useInfinitePlaylists from "../../hooks/useInfinitePlaylists";
 import { motion } from "framer-motion";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
+import { useInView } from "react-intersection-observer";
+import PlayList from "./PlayList";
 
 const Root = styled("aside")({
-    width: 280,
+    width: 300,
     height: "100%",
     display: "flex",
     flexDirection: "column",
     backgroundColor: "#ffffff",
     borderRight: "1px solid #ddd",
-    padding: "20px 16px",
     boxSizing: "border-box",
+});
+
+const FixedSection = styled("div")({
+    padding: "20px 16px 0",
+    flexShrink: 0,
+});
+
+const ScrollableSection = styled("div")({
+    flexGrow: 1,
     overflowY: "auto",
+    padding: "0 16px 16px",
 });
 
 const Title = styled(Typography)({
@@ -40,10 +56,10 @@ const StyledLink = styled(NavLink)(({ theme }) => ({
     display: "flex",
     alignItems: "center",
     gap: "16px",
-    fontSize: "0.95rem",
+    fontSize: "1.05rem",
     color: "#222",
     padding: "10px 14px",
-    borderRadius: "8px",
+    borderRadius: "4px",
     "&.active": {
         backgroundColor: "#f2f2f2",
         color: theme.palette.primary.main,
@@ -51,7 +67,24 @@ const StyledLink = styled(NavLink)(({ theme }) => ({
     "&:hover": {
         backgroundColor: "#f2f2f2",
     },
+    "&:visited": {
+        color: "#222",
+    },
 }));
+
+const StyledNavItem = styled("div")({
+    display: "flex",
+    alignItems: "center",
+    gap: "16px",
+    fontSize: "1.05rem",
+    color: "#222",
+    padding: "10px 14px",
+    borderRadius: "4px",
+    cursor: "pointer",
+    "&:hover": {
+        backgroundColor: "#f2f2f2",
+    },
+});
 
 const PlaylistList = styled("ul")({
     listStyle: "none",
@@ -73,113 +106,97 @@ const Sidebar: React.FC<SidebarProps> = ({ open, onClose }) => {
     const accessToken = localStorage.getItem("access_token");
     const [isPlaylistOpen, setIsPlaylistOpen] = useState(false);
 
-    const { data, isLoading, isError } = useGetCurrentUserPlaylists({
-        limit: 50,
-        offset: 0,
-    });
+    const {
+        data,
+        fetchNextPage,
+        hasNextPage,
+        isFetchingNextPage,
+        isLoading,
+        isError,
+    } = useInfinitePlaylists(10);
+
+    const { ref, inView } = useInView();
+
+    useEffect(() => {
+        if (inView && hasNextPage) {
+            fetchNextPage();
+        }
+    }, [inView, hasNextPage, fetchNextPage]);
 
     const content = (
         <Root>
-            <Title>Lime Music</Title>
+            <FixedSection>
+                <Title>Lime Music</Title>
+                <NavList>
+                    <li>
+                        <StyledLink to="/" end onClick={onClose}>
+                            <HomeIcon fontSize="small" sx={{ color: "#1db954" }} />
+                            <Typography fontSize="1.05rem" fontWeight={500}>홈</Typography>
+                        </StyledLink>
+                    </li>
+                    <li>
+                        <StyledLink to="/search" onClick={onClose}>
+                            <SearchIcon fontSize="small" sx={{ color: "#1db954" }} />
+                            <Typography fontSize="1.05rem" fontWeight={500}>검색하기</Typography>
+                        </StyledLink>
+                    </li>
+                    <li>
+                        <StyledNavItem onClick={() => setIsPlaylistOpen((prev) => !prev)}>
+                            <LibraryMusicIcon fontSize="medium" sx={{ color: "#1db954" }} />
+                            <Typography fontSize="1.05rem" fontWeight={500}>
+                                나의 플레이리스트
+                            </Typography>
+                            <motion.div
+                                animate={{ rotate: isPlaylistOpen ? 180 : 0, scale: [1, 1.2, 1] }}
+                                transition={{ duration: 0.35, ease: "easeInOut" }}
+                                style={{ marginLeft: "auto" }}
+                            >
+                                <KeyboardArrowDownIcon fontSize="small" />
+                            </motion.div>
+                        </StyledNavItem>
+                    </li>
+                </NavList>
+            </FixedSection>
 
-            <NavList>
-                <li>
-                    <StyledLink to="/" end onClick={onClose}>
-                        <HomeIcon fontSize="small" sx={{ color: "#1db954" }} />
-                        홈
-                    </StyledLink>
-                </li>
-                <li>
-                    <StyledLink to="/search" onClick={onClose}>
-                        <SearchIcon fontSize="small" sx={{ color: "#1db954" }} />
-                        검색하기
-                    </StyledLink>
-                </li>
-
-                <li>
-                    <div
-                        style={{
-                            display: "flex",
-                            alignItems: "center",
-                            justifyContent: "space-between",
-                            padding: "10px 14px",
-                            borderRadius: "8px",
-                            cursor: "pointer",
-                            color: "#222",
-                            fontSize: "0.95rem",
-                        }}
-                        onClick={() => setIsPlaylistOpen((prev) => !prev)}
-                    >
-                        <span style={{ display: "flex", alignItems: "center", gap: "16px" }}>
-                            <LibraryMusicIcon fontSize="small" sx={{ color: "#1db954" }} />
-                            나의 플레이리스트
-                        </span>
-
-                        <motion.div
-
-                            animate={{
-                                rotate: isPlaylistOpen ? 180 : 0,
-                                scale: [1, 1.2, 1],
-                            }}
-                            transition={{
-                                duration: 0.35,
-                                ease: "easeInOut",
-                            }}
-                            style={{ display: "flex", alignItems: "center" }}
+            {isPlaylistOpen && (
+                <ScrollableSection>
+                    {!accessToken ? (
+                        <Typography
+                            variant="body2"
+                            sx={{ color: "text.secondary", mt: 1, pl: "54px" }}
                         >
-                            <KeyboardArrowDownIcon fontSize="small" />
-                        </motion.div>
-                    </div>
-
-                    {isPlaylistOpen && (
-                        !accessToken ? (
-                            <Typography
-                                variant="body2"
-                                sx={{
-                                    color: "text.secondary",
-                                    mt: 1,
-                                    pl: "48px",
+                            아직 회원이 아니신가요?
+                            <br />
+                            <a
+                                href="https://www.spotify.com/signup/"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                style={{
+                                    textDecoration: "underline",
+                                    color: "#1db954",
+                                    fontWeight: 500,
                                 }}
                             >
-                                아직 회원이 아니신가요?
-                                <br />
-                                <a
-                                    href="https://www.spotify.com/signup/"
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    style={{
-                                        textDecoration: "underline",
-                                        color: "#1db954",
-                                        fontWeight: 500,
-                                    }}
-                                >
-                                    라임뮤직 가입하러 가기
-                                </a>
-                            </Typography>
-                        ) : isLoading ? (
-                            <Typography sx={{ mt: 1, px: 2 }}>로딩 중...</Typography>
-                        ) : isError ? (
-                            <Typography color="error" sx={{ mt: 1, px: 2 }}>
-                                불러오기 실패
-                            </Typography>
-                        ) : (
-                            <PlaylistList style={{ paddingLeft: "34px" }}>
-                                {data?.items.map((pl) => (
-                                    <li key={pl.id}>
-                                        <StyledLink to={`/playlist/${pl.id}`} onClick={onClose}>
-                                            {pl.name}
-                                        </StyledLink>
-                                    </li>
-                                ))}
-                            </PlaylistList>
-                        )
+                                라임뮤직 가입하러 가기
+                            </a>
+                        </Typography>
+                    ) : isLoading ? (
+                        <Typography sx={{ mt: 1 }}>로딩 중...</Typography>
+                    ) : isError ? (
+                        <Typography color="error" sx={{ mt: 1 }}>
+                            불러오기 실패
+                        </Typography>
+                    ) : (
+                        <PlayList
+                            data={data}
+                            fetchNextPage={fetchNextPage}
+                            hasNextPage={hasNextPage}
+                            isFetchingNextPage={isFetchingNextPage}
+                            onClose={onClose}
+                        />
                     )}
-                </li>
-            </NavList>
-
-
-
-
+                </ScrollableSection>
+            )}
         </Root>
     );
 

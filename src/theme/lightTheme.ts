@@ -18,6 +18,9 @@ const lightTheme = createTheme({
             main: '#ff2d55',
         },
     },
+    typography: {
+        fontFamily: "'SUIT', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif",
+    },
     components: {
         MuiButton: {
             styleOverrides: {

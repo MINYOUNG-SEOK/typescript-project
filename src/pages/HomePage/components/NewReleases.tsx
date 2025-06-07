@@ -35,7 +35,7 @@ const NewReleases = () => {
                         }
                     }}
                 >
-                    최신 발매
+                    최신곡
                 </Typography>
                 <img
                     src={btnMoreIcon}
