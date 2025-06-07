@@ -28,6 +28,7 @@ const StyledList = styled("ul")({
     listStyle: "none",
     padding: 0,
     margin: 0,
+    marginTop: "8px",
     display: "flex",
     flexDirection: "column",
     gap: "8px",
@@ -102,7 +103,7 @@ const PlayList: React.FC<PlaylistListProps> = ({
                     );
                 })
             )}
-            <li style={{ height: "30px" }} aria-hidden="true" />
+            <li style={{ height: "16px" }} aria-hidden="true" />
             {isFetchingNextPage && (
                 <div style={{ display: "flex", justifyContent: "center", padding: "16px 0" }}>
                     <CircularProgress size={24}
