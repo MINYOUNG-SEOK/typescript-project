@@ -15,14 +15,38 @@ import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import { useInView } from "react-intersection-observer";
 import PlayList from "./PlayList";
 
-const Root = styled("aside")({
-    width: 300,
+const Root = styled("aside")<{ width: number }>(({ width }) => ({
+    width,
     height: "100%",
     display: "flex",
     flexDirection: "column",
     backgroundColor: "#ffffff",
     borderRight: "1px solid #ddd",
     boxSizing: "border-box",
+    position: "relative",
+}));
+
+const ResizeHandle = styled("div")({
+    position: "absolute",
+    top: 0,
+    right: 0,
+    width: 8,
+    height: "100%",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    cursor: "col-resize",
+    zIndex: 10,
+    "&:hover": {
+        backgroundColor: "#f5f5f5",
+    },
+    "::before": {
+        content: '""',
+        width: 3,
+        height: 40,
+        background: "#aaa",
+        borderRadius: 1,
+    },
 });
 
 const FixedSection = styled("div")({
@@ -86,16 +110,6 @@ const StyledNavItem = styled("div")({
     },
 });
 
-const PlaylistList = styled("ul")({
-    listStyle: "none",
-    padding: 0,
-    margin: 0,
-    marginTop: "12px",
-    display: "flex",
-    flexDirection: "column",
-    gap: "8px",
-});
-
 interface SidebarProps {
     open: boolean;
     onClose: () => void;
@@ -105,6 +119,7 @@ const Sidebar: React.FC<SidebarProps> = ({ open, onClose }) => {
     const isMobile = useMediaQuery("(max-width:900px)");
     const accessToken = localStorage.getItem("access_token");
     const [isPlaylistOpen, setIsPlaylistOpen] = useState(false);
+    const [sidebarWidth, setSidebarWidth] = useState(300);
 
     const {
         data,
@@ -123,8 +138,30 @@ const Sidebar: React.FC<SidebarProps> = ({ open, onClose }) => {
         }
     }, [inView, hasNextPage, fetchNextPage]);
 
+    const handleMouseDown = (e: React.MouseEvent) => {
+        const startX = e.clientX;
+        const startWidth = sidebarWidth;
+        const MIN_WIDTH = 240;
+        const MAX_WIDTH = 500;
+
+        const onMouseMove = (moveEvent: MouseEvent) => {
+            const newWidth = startWidth + (moveEvent.clientX - startX);
+            if (newWidth >= MIN_WIDTH && newWidth <= MAX_WIDTH) {
+                setSidebarWidth(newWidth);
+            }
+        };
+
+        const onMouseUp = () => {
+            window.removeEventListener("mousemove", onMouseMove);
+            window.removeEventListener("mouseup", onMouseUp);
+        };
+
+        window.addEventListener("mousemove", onMouseMove);
+        window.addEventListener("mouseup", onMouseUp);
+    };
+
     const content = (
-        <Root>
+        <Root width={sidebarWidth}>
             <FixedSection>
                 <Title>Lime Music</Title>
                 <NavList>
@@ -143,9 +180,7 @@ const Sidebar: React.FC<SidebarProps> = ({ open, onClose }) => {
                     <li>
                         <StyledNavItem onClick={() => setIsPlaylistOpen((prev) => !prev)}>
                             <LibraryMusicIcon fontSize="medium" sx={{ color: "#1db954" }} />
-                            <Typography fontSize="1rem" fontWeight={500}>
-                                나의 플레이리스트
-                            </Typography>
+                            <Typography fontSize="1rem" fontWeight={500}>나의 플레이리스트</Typography>
                             <motion.div
                                 animate={{ rotate: isPlaylistOpen ? 180 : 0, scale: [1, 1.2, 1] }}
                                 transition={{ duration: 0.35, ease: "easeInOut" }}
@@ -197,6 +232,8 @@ const Sidebar: React.FC<SidebarProps> = ({ open, onClose }) => {
                     )}
                 </ScrollableSection>
             )}
+
+            <ResizeHandle onMouseDown={handleMouseDown} />
         </Root>
     );
 
