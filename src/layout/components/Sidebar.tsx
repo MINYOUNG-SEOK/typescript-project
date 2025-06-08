@@ -32,20 +32,20 @@ const ResizeHandle = styled("div")({
     right: 0,
     width: 8,
     height: "100%",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
     cursor: "col-resize",
     zIndex: 10,
+    backgroundColor: "transparent",
+    transition: "background-color 0.2s ease",
     "&:hover": {
-        backgroundColor: "#f5f5f5",
+        backgroundColor: "#f0f0f0",
     },
     "::before": {
         content: '""',
         width: 3,
         height: 40,
-        background: "#aaa",
-        borderRadius: 1,
+        background: "#bbb",
+        borderRadius: 2,
+        transition: "background 0.2s ease",
     },
 });
 
@@ -119,7 +119,7 @@ const Sidebar: React.FC<SidebarProps> = ({ open, onClose }) => {
     const isMobile = useMediaQuery("(max-width:900px)");
     const accessToken = localStorage.getItem("access_token");
     const [isPlaylistOpen, setIsPlaylistOpen] = useState(false);
-    const [sidebarWidth, setSidebarWidth] = useState(300);
+    const [sidebarWidth, setSidebarWidth] = useState(320);
 
     const {
         data,
@@ -233,7 +233,7 @@ const Sidebar: React.FC<SidebarProps> = ({ open, onClose }) => {
                 </ScrollableSection>
             )}
 
-            <ResizeHandle onMouseDown={handleMouseDown} />
+            {!isMobile && <ResizeHandle onMouseDown={handleMouseDown} />}
         </Root>
     );
 
