@@ -111,7 +111,7 @@ const PlayList: React.FC<PlaylistListProps> = ({
                                         }}
                                     />
                                     <div style={{ display: "flex", flexDirection: "column" }}>
-                                        <Typography fontSize="1rem" fontWeight={600}
+                                        <Typography fontSize="0.9rem" fontWeight={600}
                                             sx={{
                                                 display: "-webkit-box",
                                                 WebkitLineClamp: 2,
@@ -121,7 +121,7 @@ const PlayList: React.FC<PlaylistListProps> = ({
                                             }}>
                                             {pl.name}
                                         </Typography>
-                                        <Typography fontSize="0.875rem" color="text.secondary" noWrap>
+                                        <Typography fontSize="0.8rem" color="text.secondary" noWrap>
                                             {pl.owner.display_name}의 플레이리스트
                                         </Typography>
                                     </div>
