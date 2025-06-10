@@ -12,37 +12,33 @@ const StyledLink = styled(NavLink)(({ theme }) => ({
     gap: "16px",
     padding: "10px 12px",
     background: "#fff",
-    borderRadius: "10px",
-    boxShadow: "0 1px 4px rgba(0,0,0,0.05)",
+    borderRadius: "8px",
     transition: "transform 0.2s ease, box-shadow 0.2s ease",
     position: "relative",
     overflow: "hidden",
-    color: "#222", // 기본 색상
+    color: "#222",
 
-    // 💡 이 아래 세 줄이 핵심입니다.
     "&:link": {
         color: "#222",
     },
     "&:visited": {
         color: "#222",
     },
-    "&:hover": {
-        transform: "translateY(-2px)",
-        boxShadow: "0 4px 12px rgba(0,0,0,0.1)",
-        backgroundColor: "#f9f9f9",
+    "&.active": {
+        backgroundColor: "#f2f2f2",
     },
-    "&::before": {
-        content: '""',
-        position: "absolute",
-        left: 0,
-        top: 0,
-        bottom: 0,
-        width: 4,
-        background: "linear-gradient(180deg, #1db954, #1ed760)",
-        borderRadius: 1,
-        opacity: 0,
-        transition: "opacity 0.2s ease",
-    },
+    // "&::before": {
+    //     content: '""',
+    //     position: "absolute",
+    //     left: 0,
+    //     top: 0,
+    //     bottom: 0,
+    //     width: 4,
+    //     background: "linear-gradient(180deg, #1db954, #1ed760)",
+    //     borderRadius: 1,
+    //     opacity: 0,
+    //     transition: "opacity 0.2s ease",
+    // },
     "&:hover::before": {
         opacity: 1,
     },
@@ -99,13 +95,13 @@ const PlayList: React.FC<PlaylistListProps> = ({
                                     <img
                                         src={
                                             pl.images?.[0]?.url ||
-                                            "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRSAySszMhWPAD-i4hov3Km4ss4Pvxjiacx6Q&s"
+                                            "https://placehold.co/50x50?text=No Image"
                                         }
                                         alt={pl.name}
                                         width={50}
                                         height={50}
                                         style={{
-                                            borderRadius: 6,
+                                            borderRadius: 8,
                                             objectFit: "cover",
                                             flexShrink: 0,
                                         }}
@@ -132,7 +128,7 @@ const PlayList: React.FC<PlaylistListProps> = ({
                                         transition: "opacity 0.2s ease",
                                         "&:hover": { opacity: 1 },
                                         pointerEvents: "none",
-                                        ".MuiListItem:hover &": {
+                                        [`${StyledLink}:hover &`]: {
                                             opacity: 1,
                                             pointerEvents: "auto",
                                         },

@@ -88,12 +88,6 @@ const StyledLink = styled(NavLink)(({ theme }) => ({
         backgroundColor: "#f2f2f2",
         color: theme.palette.primary.main,
     },
-    "&:hover": {
-        backgroundColor: "#f2f2f2",
-    },
-    "&:visited": {
-        color: "#222",
-    },
 }));
 
 const StyledNavItem = styled("div")({
@@ -105,9 +99,6 @@ const StyledNavItem = styled("div")({
     padding: "10px 14px",
     borderRadius: "4px",
     cursor: "pointer",
-    "&:hover": {
-        backgroundColor: "#f2f2f2",
-    },
 });
 
 interface SidebarProps {
