@@ -107,7 +107,7 @@ interface SidebarProps {
 }
 
 const Sidebar: React.FC<SidebarProps> = ({ open, onClose }) => {
-    const isMobile = useMediaQuery("(max-width:900px)");
+    const isMobile = useMediaQuery("(max-width:1200px)");
     const accessToken = localStorage.getItem("access_token");
     const [isPlaylistOpen, setIsPlaylistOpen] = useState(false);
     const [sidebarWidth, setSidebarWidth] = useState(320);

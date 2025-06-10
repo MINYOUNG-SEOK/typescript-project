@@ -19,7 +19,7 @@ const Main = styled('main')({
 });
 
 const AppLayout: React.FC = () => {
-    const isMobile = useMediaQuery('(max-width:900px)');
+    const isMobile = useMediaQuery('(max-width:1200px)');
     const [open, setOpen] = useState(false);
     const toggleSidebar = () => setOpen(prev => !prev);
 

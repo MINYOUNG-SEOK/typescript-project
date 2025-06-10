@@ -1,11 +1,9 @@
-// types/playlist.ts
 import { ExternalUrls, Followers, Owner, SpotifyImage } from "./commonType";
 import { ApiResponse } from "./apiResponse";
 import { Track } from "./track";
 import { Episode } from "./episode";
 import { PublicUser } from "./user";
 
-/* ───────── 요청 DTO ───────── */
 export interface GetCurrentUserPlaylistRequest {
     limit?: number;
     offset?: number;
