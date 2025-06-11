@@ -85,6 +85,20 @@ const PlayList: React.FC<PlaylistListProps> = ({
 
     return (
         <StyledList>
+            {/* 플레이리스트가 없는 경우 */}
+            {data?.pages?.[0]?.items?.length === 0 && !isFetchingNextPage && (
+                <li>
+                    <Typography
+                        variant="body2"
+                        color="text.secondary"
+                        textAlign="center"
+                        sx={{ py: 4 }}
+                    >
+                        플레이리스트가 없습니다.
+                    </Typography>
+                </li>
+            )}
+            {/* 플레이리스트가 있을 때 */}
             {data?.pages.map((page: any) =>
                 page.items.map((pl: any, idx: number, arr: any[]) => {
                     const isLast = idx === arr.length - 1;

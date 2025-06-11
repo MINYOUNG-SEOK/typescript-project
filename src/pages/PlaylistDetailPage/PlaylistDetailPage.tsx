@@ -17,6 +17,7 @@ import {
     styled,
     useTheme,
     useMediaQuery,
+    Skeleton,
 } from "@mui/material";
 import PlayArrowIcon from "@mui/icons-material/PlayArrow";
 import ShuffleIcon from "@mui/icons-material/Shuffle";
@@ -93,12 +94,45 @@ const PlaylistDetailPage: React.FC = () => {
     const minutesOnly = Math.floor(totalSeconds / 60);
     const seconds = totalSeconds % 60;
 
-    if (isLoading)
+    if (isLoading) {
         return (
-            <Container sx={{ mt: 8, textAlign: "center" }}>
-                <CircularProgress />
+            <Container
+                maxWidth={false}
+                disableGutters
+                sx={{
+                    pt: 4,
+                    pb: 6,
+                    px: {
+                        xs: 0,
+                        sm: 3,
+                        md: 4,
+                    },
+                    display: "flex",
+                    flexDirection: isTablet ? "column" : "row",
+                    alignItems: isTablet ? "center" : "flex-start",
+                    gap: 6,
+                    textAlign: isTablet ? "center" : "left",
+                }}
+            >
+                {/* 스켈레톤 이미지 카드 */}
+                <Box sx={{ width: 260, height: 260, borderRadius: 2, overflow: "hidden" }}>
+                    <Skeleton variant="rectangular" width="100%" height="100%" animation="wave" />
+                </Box>
+
+                {/* 텍스트 스켈레톤 */}
+                <Stack spacing={1} sx={{ flex: 1 }}>
+                    <Skeleton variant="text" width={100} height={20} />
+                    <Skeleton variant="text" width="80%" height={40} />
+                    <Skeleton variant="text" width="60%" height={20} />
+                    <Skeleton variant="text" width="40%" height={20} />
+                    <Stack direction="row" spacing={2} sx={{ mt: 2 }}>
+                        <Skeleton variant="rectangular" width={100} height={40} sx={{ borderRadius: 2 }} />
+                        <Skeleton variant="rectangular" width={100} height={40} sx={{ borderRadius: 2 }} />
+                    </Stack>
+                </Stack>
             </Container>
         );
+    }
 
     if (isError || !playlist)
         return (
