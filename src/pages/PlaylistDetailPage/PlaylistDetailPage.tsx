@@ -241,41 +241,30 @@ const PlaylistDetailPage: React.FC = () => {
                                     const track = item.track;
                                     const index = pageIndex * 20 + i;
                                     return (
-                                        <React.Fragment key={track.id ?? `${index}`}>                            <BodyRow sx={{ backgroundColor: index % 2 === 0 ? "#FAFAFA" : "transparent" }}>
-                                            <TableCell sx={{ pl: 2 }}>
-                                                <Box sx={{ display: "flex", flexDirection: "column", gap: 0.5 }}>
-                                                    <Stack direction="row" gap={2} alignItems="center">
-                                                        <img
-                                                            src={track.album?.images?.[2]?.url ?? "https://placehold.co/40x40?text=No Image"}
-                                                            width={40}
-                                                            height={40}
-                                                            alt={track.name}
-                                                            style={{ borderRadius: 4 }}
-                                                        />
-                                                        <Box
-                                                            sx={{
-                                                                display: "flex",
-                                                                flexDirection: "column",
-                                                                justifyContent: "center",
-                                                                overflow: "hidden",
-                                                                maxWidth: "100%",
-                                                                flexShrink: 1,
-                                                            }}
-                                                        >
-                                                            <Typography
-                                                                fontWeight={600}
-                                                                noWrap
+                                        <React.Fragment key={track.id ?? `${index}`}>
+                                            <BodyRow sx={{ backgroundColor: index % 2 === 0 ? "#FAFAFA" : "transparent" }}>
+                                                <TableCell sx={{ pl: 2 }}>
+                                                    <Box sx={{ display: "flex", flexDirection: "column", gap: 0.5 }}>
+                                                        <Stack direction="row" gap={2} alignItems="center">
+                                                            <img
+                                                                src={track.album?.images?.[2]?.url ?? "https://placehold.co/40x40?text=No Image"}
+                                                                width={40}
+                                                                height={40}
+                                                                alt={track.name}
+                                                                style={{ borderRadius: 4 }}
+                                                            />
+                                                            <Box
                                                                 sx={{
+                                                                    display: "flex",
+                                                                    flexDirection: "column",
+                                                                    justifyContent: "center",
                                                                     overflow: "hidden",
-                                                                    textOverflow: "ellipsis",
-                                                                    whiteSpace: "nowrap",
                                                                     maxWidth: "100%",
+                                                                    flexShrink: 1,
                                                                 }}
                                                             >
-                                                                {track.name}
-                                                            </Typography>
-                                                            {isTablet && (
                                                                 <Typography
+                                                                    fontWeight={600}
                                                                     noWrap
                                                                     sx={{
                                                                         overflow: "hidden",
@@ -284,63 +273,75 @@ const PlaylistDetailPage: React.FC = () => {
                                                                         maxWidth: "100%",
                                                                     }}
                                                                 >
-                                                                    {track.artists.map((a: any) => a.name).join(", ")}
+                                                                    {track.name}
                                                                 </Typography>
-                                                            )}
-                                                        </Box>
-                                                    </Stack>
-                                                </Box>
-                                            </TableCell>
+                                                                {isTablet && (
+                                                                    <Typography
+                                                                        noWrap
+                                                                        sx={{
+                                                                            overflow: "hidden",
+                                                                            textOverflow: "ellipsis",
+                                                                            whiteSpace: "nowrap",
+                                                                            maxWidth: "100%",
+                                                                        }}
+                                                                    >
+                                                                        {track.artists.map((a: any) => a.name).join(", ")}
+                                                                    </Typography>
+                                                                )}
+                                                            </Box>
+                                                        </Stack>
+                                                    </Box>
+                                                </TableCell>
 
-                                            {!isTablet && (
-                                                <TableCell sx={{ overflow: "hidden" }}>
-                                                    <Typography
-                                                        noWrap
+                                                {!isTablet && (
+                                                    <TableCell sx={{ overflow: "hidden" }}>
+                                                        <Typography
+                                                            noWrap
+                                                            sx={{
+                                                                overflow: "hidden",
+                                                                textOverflow: "ellipsis",
+                                                                whiteSpace: "nowrap",
+                                                                maxWidth: "100%",
+                                                            }}
+                                                        >
+                                                            {track.artists.map((a: any) => a.name).join(", ")}
+                                                        </Typography>
+                                                    </TableCell>
+                                                )}
+                                                {!isMobile && (
+                                                    <TableCell
                                                         sx={{
                                                             overflow: "hidden",
                                                             textOverflow: "ellipsis",
                                                             whiteSpace: "nowrap",
-                                                            maxWidth: "100%",
                                                         }}
                                                     >
-                                                        {track.artists.map((a: any) => a.name).join(", ")}
-                                                    </Typography>
-                                                </TableCell>
-                                            )}
-                                            {!isMobile && (
-                                                <TableCell
-                                                    sx={{
-                                                        overflow: "hidden",
-                                                        textOverflow: "ellipsis",
-                                                        whiteSpace: "nowrap",
-                                                    }}
-                                                >
-                                                    <Typography noWrap sx={{ overflow: "hidden", textOverflow: "ellipsis" }}>
-                                                        {track.album?.name}
-                                                    </Typography>
-                                                </TableCell>
-                                            )}
-                                            {!isXSmall && (
-                                                <TableCell align="right" sx={{ pr: 1, verticalAlign: "middle" }} width={64}>
-                                                    <Stack direction="row" gap={1} alignItems="center">
-                                                        <Typography>{formatMs(track.duration_ms)}</Typography>
-                                                        <IconButton
-                                                            size="small"
-                                                            aria-label="메뉴"
-                                                            sx={{
-                                                                "& svg": { fontSize: 20 },
-                                                                color: "#1db954",
-                                                                opacity: 0,
-                                                                transition: "opacity 0.2s",
-                                                                ".MuiTableRow-hover:hover &": { opacity: 1 },
-                                                            }}
-                                                        >
-                                                            <MoreHorizIcon />
-                                                        </IconButton>
-                                                    </Stack>
-                                                </TableCell>
-                                            )}
-                                        </BodyRow>
+                                                        <Typography noWrap sx={{ overflow: "hidden", textOverflow: "ellipsis" }}>
+                                                            {track.album?.name}
+                                                        </Typography>
+                                                    </TableCell>
+                                                )}
+                                                {!isXSmall && (
+                                                    <TableCell align="right" sx={{ pr: 1, verticalAlign: "middle" }} width={64}>
+                                                        <Stack direction="row" gap={1} alignItems="center">
+                                                            <Typography>{formatMs(track.duration_ms)}</Typography>
+                                                            <IconButton
+                                                                size="small"
+                                                                aria-label="메뉴"
+                                                                sx={{
+                                                                    "& svg": { fontSize: 20 },
+                                                                    color: "#1db954",
+                                                                    opacity: 0,
+                                                                    transition: "opacity 0.2s",
+                                                                    ".MuiTableRow-hover:hover &": { opacity: 1 },
+                                                                }}
+                                                            >
+                                                                <MoreHorizIcon />
+                                                            </IconButton>
+                                                        </Stack>
+                                                    </TableCell>
+                                                )}
+                                            </BodyRow>
                                         </React.Fragment>
                                     );
                                 })
