@@ -31,12 +31,3 @@ export interface Owner {
     type: "user";
     uri: string;
 }
-
-export interface Artist {
-    external_urls: ExternalUrls;
-    href: string;
-    id: string;
-    name: string;
-    type: "artist";
-    uri: string;
-}

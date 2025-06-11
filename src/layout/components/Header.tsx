@@ -80,7 +80,7 @@ const Header: React.FC<HeaderProps> = ({ isMobile, toggleSidebar }) => {
                 }
             </Box>
 
-            {accessToken ? (
+            {accessToken && userProfile ? (
                 <ProfileContainer>
                     <Avatar
                         src={userProfile?.images?.[0]?.url}

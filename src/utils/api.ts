@@ -21,4 +21,16 @@ api.interceptors.request.use((config) => {
     return config;
 });
 
+api.interceptors.response.use(
+    (response) => response,
+    (error) => {
+        if (error.response && error.response.status === 401) {
+            localStorage.removeItem("access_token");
+            localStorage.removeItem("code_verifier");
+            console.warn("401 Unauthorized: Access token expired or invalid. Logging out...");
+        }
+        return Promise.reject(error);
+    }
+);
+
 export default api;

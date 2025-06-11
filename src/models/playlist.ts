@@ -16,6 +16,14 @@ export interface GetPlaylistRequest {
     additional_types?: string;
 }
 
+export interface GetPlaylistItemsRequest extends GetPlaylistRequest {
+    offset?: number;
+    limit?: number;
+}
+
+export type GetPlaylistItemsResponse = ApiResponse<PlaylistTrack>;
+
+
 interface BasePlaylist {
     collaborative: boolean;
     description: string | null;
