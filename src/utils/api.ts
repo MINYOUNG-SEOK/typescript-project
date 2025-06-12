@@ -21,13 +21,24 @@ api.interceptors.request.use((config) => {
     return config;
 });
 
+let hasRedirected = false; // 중복 리다이렉트 방지용 플래그
+
 api.interceptors.response.use(
     (response) => response,
     (error) => {
-        if (error.response && error.response.status === 401) {
+        if (
+            error.response &&
+            error.response.status === 401 &&
+            !hasRedirected
+        ) {
+            hasRedirected = true;
+
             localStorage.removeItem("access_token");
+            localStorage.removeItem("refresh_token");
             localStorage.removeItem("code_verifier");
+
             console.warn("401 Unauthorized: Access token expired or invalid. Logging out...");
+            window.location.href = "/";
         }
         return Promise.reject(error);
     }

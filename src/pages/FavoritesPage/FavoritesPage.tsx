@@ -66,10 +66,22 @@ const formatMs = (ms: number) => {
 const FavoritesPage: React.FC = () => {
     const { data: userProfile } = useGetCurrentUserProfile();
     const [favorites, setFavorites] = React.useState<any[]>([]);
+    const accessToken = localStorage.getItem("access_token");
+
     useEffect(() => {
         const stored = localStorage.getItem("favorites");
         if (stored) setFavorites(JSON.parse(stored));
     }, []);
+
+    if (!accessToken) {
+        return (
+            <Container sx={{ mt: 8 }}>
+                <Typography variant="body1" align="center" color="text.secondary">
+                    로그인 후 확인 가능한 페이지입니다.
+                </Typography>
+            </Container>
+        );
+    }
 
     const toggleFavorite = (id: string) => {
         const next = favorites.filter(t => t.id !== id);

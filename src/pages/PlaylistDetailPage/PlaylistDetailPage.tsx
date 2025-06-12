@@ -76,6 +76,18 @@ const headerWrapperSx = {
 
 const PlaylistDetailPage: React.FC = () => {
     const { id } = useParams<{ id: string }>();
+    const accessToken = localStorage.getItem("access_token");
+
+    if (!accessToken) {
+        return (
+            <Container sx={{ mt: 8 }}>
+                <Typography variant="body1" align="center" color="text.secondary">
+                    로그인 후 확인 가능한 페이지입니다.
+                </Typography>
+            </Container>
+        )
+    }
+
     if (!id) return <Navigate to="/" replace />;
 
     const { data: playlist, isLoading, isError, error } = useGetPlaylist({ playlist_id: id });
@@ -139,6 +151,8 @@ const PlaylistDetailPage: React.FC = () => {
         );
     }
 
+
+
     if (isError || !playlist) {
         return (
             <Container sx={{ mt: 8 }}>
@@ -146,7 +160,7 @@ const PlaylistDetailPage: React.FC = () => {
                     {(error as Error)?.message ?? "플레이리스트 정보를 가져올 수 없습니다."}
                 </Alert>
             </Container>
-        );
+        )
     }
 
     return (
