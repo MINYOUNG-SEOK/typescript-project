@@ -67,7 +67,7 @@ export type GetCurrentUserPlaylistsResponse =
 
 export interface CreatePlaylistRequest {
     name: string;
-    public?: boolean;
+    playlistpublic?: boolean;
     collaborative?: boolean;
     description?: string;
 }
