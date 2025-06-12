@@ -152,7 +152,7 @@ const FavoritesPage: React.FC = () => {
             </Container>
 
             {/* 테이블 */}
-            <Box sx={{ flex: 1, overflowY: "auto", mt: 4 }}>
+            <Box sx={{ flex: 1, mt: 4 }}>
                 <Container {...containerProps} sx={{ px: { xs: 2, sm: 3, md: 4 } }}>
                     <Table sx={{ width: "100%", tableLayout: "fixed", "& th, & td": { border: "none", py: 1.25 } }}>
                         <TableHead>
@@ -170,14 +170,21 @@ const FavoritesPage: React.FC = () => {
                         </TableHead>
                         <TableBody>
                             {[...favorites].reverse().map((track, i) => {
-                                const isFav = true; // favorites page에선 항상 true
+                                const isFav = true;
                                 return (
                                     <BodyRow
                                         key={track.id ?? i}
-                                        sx={{ backgroundColor: i % 2 === 0 ? "#FAFAFA" : "transparent" }}
+                                        sx={{ backgroundColor: i % 2 === 0 ? "#FAFAFA" : "transparent", overflow: "visible", }}
+
                                     >
                                         <TableCell
-                                            sx={{ pl: 2, position: "relative", display: "flex", alignItems: "center" }}
+                                            sx={{
+                                                pl: 2,
+                                                position: "relative",
+                                                display: "flex",
+                                                alignItems: "center",
+                                                overflow: "visible",
+                                            }}
                                         >
                                             <IconButton
                                                 className="favBtn"
@@ -189,7 +196,7 @@ const FavoritesPage: React.FC = () => {
                                                     left: -40,
                                                     top: "50%",
                                                     transform: "translateY(-50%)",
-                                                    opacity: isFav ? 1 : 0,
+                                                    opacity: 1,
                                                     transition: "opacity 0.2s",
                                                 }}
                                                 aria-label="즐겨찾기 해제"
