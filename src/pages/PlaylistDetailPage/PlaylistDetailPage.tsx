@@ -15,8 +15,6 @@ import {
     TableBody,
     IconButton,
     styled,
-    useTheme,
-    useMediaQuery,
     Skeleton,
 } from "@mui/material";
 import PlayArrowIcon from "@mui/icons-material/PlayArrow";
@@ -26,6 +24,7 @@ import useGetPlaylist from "../../hooks/useGetPlaylist";
 import useGetCurrentUserProfile from "../../hooks/useGetCurrentUserProfile";
 import useGetPlaylistItems from "../../hooks/useGetPlaylistItems";
 import { useInView } from "react-intersection-observer";
+import ImageWithFallback from "../../common/components/ImageWithFallbackProps";
 
 const formatMs = (ms: number) => {
     const total = Math.floor(ms / 1000);
@@ -48,6 +47,7 @@ const HeaderTableCell = styled(TableCell)({
     color: "#6e6e73",
     fontWeight: 700,
     fontSize: 14,
+    whiteSpace: "nowrap",
 });
 
 const BodyRow = styled(TableRow)({
@@ -55,31 +55,35 @@ const BodyRow = styled(TableRow)({
     "&:hover": { background: "#f2f2f2" },
 });
 
+// 공통 Container props & sx
+const containerProps = {
+    maxWidth: false as const,
+    disableGutters: true as const,
+};
+const headerWrapperSx = {
+    pt: { xs: 2, sm: 2 },
+    pb: { xs: 2, sm: 2 },
+    px: { xs: 0, sm: 3, md: 4 },
+    display: "flex",
+    flexDirection: { xs: "column", md: "row" },
+    alignItems: { xs: "center", sm: "center" },
+    rowGap: { xs: 2, sm: 2 },
+    columnGap: { xs: 2, sm: 6 },
+    textAlign: { xs: "center", md: "left" },
+};
+
 const PlaylistDetailPage: React.FC = () => {
     const { id } = useParams<{ id: string }>();
     if (!id) return <Navigate to="/" replace />;
 
-    const theme = useTheme();
-    const isTablet = useMediaQuery("(max-width:1000px)");
-    const isMobile = useMediaQuery("(max-width:600px)");
-    const isXSmall = useMediaQuery("(max-width:500px)");
-
     const { data: playlist, isLoading, isError, error } = useGetPlaylist({ playlist_id: id });
     const { data: userProfile } = useGetCurrentUserProfile();
-    // 무한스크롤 쿼리 선언
-    const {
-        data,
-        fetchNextPage,
-        hasNextPage,
-        isFetchingNextPage,
-    } = useGetPlaylistItems({ playlist_id: id });
-    // 뷰포트 진입 감지
+    const { data, fetchNextPage, hasNextPage, isFetchingNextPage } =
+        useGetPlaylistItems({ playlist_id: id });
+
     const { ref, inView } = useInView({ threshold: 0 });
-    // 감지되면 다음 페이지
     useEffect(() => {
-        if (inView && hasNextPage) {
-            fetchNextPage();
-        }
+        if (inView && hasNextPage) fetchNextPage();
     }, [inView, hasNextPage, fetchNextPage]);
 
     const totalMs = React.useMemo(() => {
@@ -96,30 +100,10 @@ const PlaylistDetailPage: React.FC = () => {
 
     if (isLoading) {
         return (
-            <Container
-                maxWidth={false}
-                disableGutters
-                sx={{
-                    pt: 4,
-                    pb: 6,
-                    px: {
-                        xs: 0,
-                        sm: 3,
-                        md: 4,
-                    },
-                    display: "flex",
-                    flexDirection: isTablet ? "column" : "row",
-                    alignItems: isTablet ? "center" : "flex-start",
-                    gap: 6,
-                    textAlign: isTablet ? "center" : "left",
-                }}
-            >
-                {/* 스켈레톤 이미지 카드 */}
+            <Container {...containerProps} sx={headerWrapperSx}>
                 <Box sx={{ width: 260, height: 260, borderRadius: 2, overflow: "hidden" }}>
                     <Skeleton variant="rectangular" width="100%" height="100%" animation="wave" />
                 </Box>
-
-                {/* 텍스트 스켈레톤 */}
                 <Stack spacing={1} sx={{ flex: 1 }}>
                     <Skeleton variant="text" width={100} height={20} />
                     <Skeleton variant="text" width="80%" height={40} />
@@ -134,7 +118,7 @@ const PlaylistDetailPage: React.FC = () => {
         );
     }
 
-    if (isError || !playlist)
+    if (isError || !playlist) {
         return (
             <Container sx={{ mt: 8 }}>
                 <Alert severity="error">
@@ -142,131 +126,128 @@ const PlaylistDetailPage: React.FC = () => {
                 </Alert>
             </Container>
         );
+    }
 
     return (
-        <Box
-            sx={{
-                height: "100%",
-                display: "flex",
-                flexDirection: "column",
-                bgcolor: "#FFF",
-            }}
-        >
-
-            <Box sx={{ flex: "0 0 auto" }}>
-                <Container
-                    maxWidth={false}
-                    disableGutters
+        <Box sx={{ display: "flex", flexDirection: "column", bgcolor: "#FFF" }}>
+            {/* 헤더 */}
+            <Container {...containerProps} sx={headerWrapperSx}>
+                <Box
+                    component={ImageWithFallback}
+                    src={playlist.images?.[0]?.url}
+                    fallbackSrc="https://placehold.co/300x300?text=No+Image"
+                    alt={playlist.name}
                     sx={{
-                        pt: 4,
-                        pb: 6,
-                        px: {
-                            xs: 0,
-                            sm: 3,
-                            md: 4,
-                        },
-                        display: "flex",
-                        flexDirection: isTablet ? "column" : "row",
-                        alignItems: isTablet ? "center" : "flex-start",
-                        gap: 6,
-                        textAlign: isTablet ? "center" : "left",
+                        width: { xs: 150, sm: 200 },
+                        height: { xs: 150, sm: 200 },
+                        borderRadius: 2,
+                        objectFit: "cover",
+                        mb: { xs: 0 }
                     }}
+                />
+                <Stack
+                    sx={{ gap: 2, alignSelf: { md: "center" } }}
+                    justifyContent={{ xs: "center", md: "flex-end" }}
+                    alignItems={{ xs: "center", md: "flex-start" }}
                 >
-                    <img
-                        src={playlist.images?.[0]?.url ?? "https://placehold.co/300x300?text=No+Image"}
-                        alt={playlist.name}
-                        width={260}
-                        height={260}
-                        style={{ borderRadius: 8, objectFit: "cover" }}
-                    />
-                    <Stack
-                        spacing={1}
-                        justifyContent={isTablet ? "center" : "flex-end"}
-                        alignItems={isTablet ? "center" : "flex-start"}
-                        sx={{
-                            alignSelf: isTablet ? "auto" : "center",
-                        }}
+                    <Typography variant="body2">
+                        {playlist.public ? "공개 플레이리스트" : "비공개 플레이리스트"}
+                    </Typography>
+                    <Typography
+                        fontWeight={700}
+                        lineHeight={1.2}
+                        sx={{ fontSize: { xs: "1.5rem", sm: "2rem", md: "2.5rem" } }}
                     >
+                        {playlist.name}
+                    </Typography>
+                    <Stack direction="row" alignItems="center" spacing={1} sx={{ mt: 0 }}>
+                        <ImageWithFallback
+                            src={userProfile?.images?.[0]?.url}
+                            fallbackSrc="https://placehold.co/28x28?text=No+Image"
+                            alt={playlist.owner?.display_name ?? '플레이리스트 소유자'}
+                            width={28}
+                            height={28}
+                            style={{ borderRadius: "50%" }}
+                        />
                         <Typography variant="body2">
-                            {playlist.public ? "공개 플레이리스트" : "비공개 플레이리스트"}
+                            <strong>{playlist.owner?.display_name}</strong> · {playlist.tracks.total}곡, {minutesOnly}분 {seconds}초
                         </Typography>
-                        <Typography
-                            fontWeight={700}
-                            lineHeight={1.2}
-                            sx={{
-                                fontSize: {
-                                    xs: "1.5rem",
-                                    sm: "2rem",
-                                    md: "2.5rem",
-                                },
-                            }}
-                        >
-                            {playlist.name}
-                        </Typography>
-                        <Stack direction="row" alignItems="center" spacing={1} sx={{ mt: 1 }}>
-                            <img
-                                src={userProfile?.images?.[0]?.url}
-                                alt={playlist.owner?.display_name ?? '플레이리스트 소유자'}
-                                width={28}
-                                height={28}
-                                style={{ borderRadius: "50%" }}
-                            />
-                            <Typography variant="body2">
-                                <strong>{playlist.owner?.display_name}</strong> · {playlist.tracks.total}곡, {minutesOnly}분 {seconds}초
-                            </Typography>
-                        </Stack>
-                        <Stack direction="row" gap={2} sx={{ mt: 2 }}>
-                            <Box sx={{ mt: 4 }}>
-                                <Stack direction="row" gap={1}>
-                                    <GreenButton startIcon={<PlayArrowIcon sx={{ color: "#fff" }} />} disableElevation>
-                                        재생
-                                    </GreenButton>
-                                    <GreenButton startIcon={<ShuffleIcon sx={{ color: "#fff" }} />} disableElevation>
-                                        임의 재생
-                                    </GreenButton>
-                                </Stack>
-                            </Box>
-                        </Stack>
                     </Stack>
-                </Container>
-            </Box>
+                    <Stack
+                        direction="row"
+                        gap={2}
+                        sx={{ mt: { xs: 2, sm: 2 } }}
+                    >
+                        <GreenButton
+                            startIcon={<PlayArrowIcon sx={{ color: "#fff" }} />}
+                            disableElevation
+                        >
+                            재생
+                        </GreenButton>
+                        <GreenButton
+                            startIcon={<ShuffleIcon sx={{ color: "#fff" }} />}
+                            disableElevation
+                        >
+                            임의 재생
+                        </GreenButton>
+                    </Stack>
+                </Stack>
+            </Container>
 
+            {/* 트랙 리스트 */}
             <Box
                 sx={{
+                    mt: { xs: 2, md: 4 },
                     flex: "1 1 auto",
-                    overflowY: "auto",
-                    height: "100%",
+                    overflowY: { xs: "visible", md: "auto" },
+                    height: { xs: "auto", md: "100%" },
                     scrollbarWidth: "none",
-                    "&::-webkit-scrollbar": {
-                        display: "none",
-                    },
+                    "&::-webkit-scrollbar": { display: "none" },
                 }}
             >
-                <Container
-                    maxWidth={false}
-                    disableGutters
-                    sx={{
-                        px: {
-                            xs: 0,
-                            sm: 3,
-                            md: 4,
-                        },
-                    }}
-                >
-                    <Table sx={{ tableLayout: "fixed", "& th, & td": { border: "none", py: 1.25 } }}>
-                        <colgroup>
-                            <col style={{ width: "35%" }} />
-                            {!isTablet && <col style={{ width: "40%" }} />}
-                            {!isMobile && <col style={{ width: "32%" }} />}
-                            {!isXSmall && <col style={{ width: "10%" }} />}
-                        </colgroup>
-                        <caption style={{ display: "none" }}>{playlist.name} tracks</caption>
+                <Container {...containerProps} sx={{ px: { xs: 0, sm: 3, md: 4 } }}>
+                    <Table
+                        sx={{
+                            width: "100%",
+                            tableLayout: "fixed",
+                            "& th, & td": { border: "none", py: 1.25 },
+                        }}
+                    >
                         <TableHead>
                             <TableRow>
-                                <HeaderTableCell sx={{ width: 300, pl: 0.5 }}>노래</HeaderTableCell>
-                                {!isTablet && <HeaderTableCell sx={{ width: 260 }}>아티스트</HeaderTableCell>}
-                                {!isMobile && <HeaderTableCell sx={{ width: 300 }}>앨범</HeaderTableCell>}
-                                {!isXSmall && <HeaderTableCell sx={{ width: 60, pr: 3 }}>시간</HeaderTableCell>}
+                                <HeaderTableCell
+                                    sx={{
+                                        width: { xs: "100%", md: "35%" },
+                                        whiteSpace: "nowrap",
+                                    }}
+                                >
+                                    노래
+                                </HeaderTableCell>
+                                <HeaderTableCell
+                                    sx={{
+                                        width: "40%",
+                                        display: { xs: "none", md: "table-cell" },
+                                    }}
+                                >
+                                    아티스트
+                                </HeaderTableCell>
+                                <HeaderTableCell
+                                    sx={{
+                                        width: "32%",
+                                        display: { xs: "none", sm: "none", md: "table-cell" },
+                                    }}
+                                >
+                                    앨범
+                                </HeaderTableCell>
+                                <HeaderTableCell
+                                    align="right"
+                                    sx={{
+                                        width: 80,
+                                        display: { xs: "none", sm: "none", md: "none", lg: "table-cell" },
+                                    }}
+                                >
+                                    시간
+                                </HeaderTableCell>
                             </TableRow>
                         </TableHead>
                         <TableBody>
@@ -275,126 +256,131 @@ const PlaylistDetailPage: React.FC = () => {
                                     const track = item.track;
                                     const index = pageIndex * 20 + i;
                                     return (
-                                        <React.Fragment key={track.id ?? `${index}`}>
-                                            <BodyRow sx={{ backgroundColor: index % 2 === 0 ? "#FAFAFA" : "transparent" }}>
-                                                <TableCell sx={{ pl: 2 }}>
-                                                    <Box sx={{ display: "flex", flexDirection: "column", gap: 0.5 }}>
-                                                        <Stack direction="row" gap={2} alignItems="center">
-                                                            <img
-                                                                src={track.album?.images?.[2]?.url ?? "https://placehold.co/40x40?text=No Image"}
-                                                                width={40}
-                                                                height={40}
-                                                                alt={track.name}
-                                                                style={{ borderRadius: 4 }}
-                                                            />
-                                                            <Box
-                                                                sx={{
-                                                                    display: "flex",
-                                                                    flexDirection: "column",
-                                                                    justifyContent: "center",
-                                                                    overflow: "hidden",
-                                                                    maxWidth: "100%",
-                                                                    flexShrink: 1,
-                                                                }}
-                                                            >
-                                                                <Typography
-                                                                    fontWeight={600}
-                                                                    noWrap
-                                                                    sx={{
-                                                                        overflow: "hidden",
-                                                                        textOverflow: "ellipsis",
-                                                                        whiteSpace: "nowrap",
-                                                                        maxWidth: "100%",
-                                                                    }}
-                                                                >
-                                                                    {track.name}
-                                                                </Typography>
-                                                                {isTablet && (
-                                                                    <Typography
-                                                                        noWrap
-                                                                        sx={{
-                                                                            overflow: "hidden",
-                                                                            textOverflow: "ellipsis",
-                                                                            whiteSpace: "nowrap",
-                                                                            maxWidth: "100%",
-                                                                        }}
-                                                                    >
-                                                                        {track.artists.map((a: any) => a.name).join(", ")}
-                                                                    </Typography>
-                                                                )}
-                                                            </Box>
-                                                        </Stack>
-                                                    </Box>
-                                                </TableCell>
-
-                                                {!isTablet && (
-                                                    <TableCell sx={{ overflow: "hidden" }}>
-                                                        <Typography
-                                                            noWrap
+                                        <BodyRow
+                                            key={track.id ?? index}
+                                            sx={{ backgroundColor: index % 2 === 0 ? "#FAFAFA" : "transparent" }}
+                                        >
+                                            <TableCell sx={{ pl: 2 }}>
+                                                <Box sx={{ display: "flex", flexDirection: "column", gap: 0.5 }}>
+                                                    <Stack direction="row" gap={2} alignItems="center">
+                                                        <ImageWithFallback
+                                                            src={track.album?.images?.[2]?.url}
+                                                            fallbackSrc="https://placehold.co/40x40?text=No+Image"
+                                                            width={40}
+                                                            height={40}
+                                                            alt={track.name}
+                                                            style={{ borderRadius: 4, objectFit: "cover" }}
+                                                        />
+                                                        <Box
                                                             sx={{
+                                                                display: "flex",
+                                                                flexDirection: "column",
+                                                                justifyContent: "center",
                                                                 overflow: "hidden",
-                                                                textOverflow: "ellipsis",
-                                                                whiteSpace: "nowrap",
                                                                 maxWidth: "100%",
+                                                                flexShrink: 1,
                                                             }}
                                                         >
-                                                            {track.artists.map((a: any) => a.name).join(", ")}
-                                                        </Typography>
-                                                    </TableCell>
-                                                )}
-                                                {!isMobile && (
-                                                    <TableCell
-                                                        sx={{
-                                                            overflow: "hidden",
-                                                            textOverflow: "ellipsis",
-                                                            whiteSpace: "nowrap",
-                                                        }}
-                                                    >
-                                                        <Typography noWrap sx={{ overflow: "hidden", textOverflow: "ellipsis" }}>
-                                                            {track.album?.name}
-                                                        </Typography>
-                                                    </TableCell>
-                                                )}
-                                                {!isXSmall && (
-                                                    <TableCell align="right" sx={{ pr: 1, verticalAlign: "middle" }} width={64}>
-                                                        <Stack direction="row" gap={1} alignItems="center">
-                                                            <Typography>{formatMs(track.duration_ms)}</Typography>
-                                                            <IconButton
-                                                                size="small"
-                                                                aria-label="메뉴"
+                                                            <Typography
+                                                                fontWeight={600}
+                                                                noWrap
                                                                 sx={{
-                                                                    "& svg": { fontSize: 20 },
-                                                                    color: "#1db954",
-                                                                    opacity: 0,
-                                                                    transition: "opacity 0.2s",
-                                                                    ".MuiTableRow-hover:hover &": { opacity: 1 },
+                                                                    overflow: "hidden",
+                                                                    textOverflow: "ellipsis",
+                                                                    whiteSpace: "nowrap",
+                                                                    maxWidth: "100%",
                                                                 }}
                                                             >
-                                                                <MoreHorizIcon />
-                                                            </IconButton>
-                                                        </Stack>
-                                                    </TableCell>
-                                                )}
-                                            </BodyRow>
-                                        </React.Fragment>
+                                                                {track.name}
+                                                            </Typography>
+                                                            <Typography
+                                                                noWrap
+                                                                sx={{
+                                                                    display: { xs: "block", md: "none" },
+                                                                    overflow: "hidden",
+                                                                    textOverflow: "ellipsis",
+                                                                    whiteSpace: "nowrap",
+                                                                    maxWidth: "100%",
+                                                                }}
+                                                            >
+                                                                {track.artists.map((a: any) => a.name).join(", ")}
+                                                            </Typography>
+                                                        </Box>
+                                                    </Stack>
+                                                </Box>
+                                            </TableCell>
+                                            <TableCell
+                                                sx={{
+                                                    overflow: "hidden",
+                                                    display: { xs: "none", md: "table-cell" },
+                                                }}
+                                            >
+                                                <Typography
+                                                    noWrap
+                                                    sx={{
+                                                        overflow: "hidden",
+                                                        textOverflow: "ellipsis",
+                                                        whiteSpace: "nowrap",
+                                                        maxWidth: "100%",
+                                                    }}
+                                                >
+                                                    {track.artists.map((a: any) => a.name).join(", ")}
+                                                </Typography>
+                                            </TableCell>
+                                            <TableCell
+                                                sx={{
+                                                    overflow: "hidden",
+                                                    textOverflow: "ellipsis",
+                                                    whiteSpace: "nowrap",
+                                                    display: { xs: "none", sm: "none", md: "table-cell" },
+                                                }}
+                                            >
+                                                <Typography noWrap sx={{ overflow: "hidden", textOverflow: "ellipsis" }}>
+                                                    {track.album?.name}
+                                                </Typography>
+                                            </TableCell>
+                                            <TableCell
+                                                align="right"
+                                                sx={{
+                                                    pr: 1,
+                                                    verticalAlign: "middle",
+                                                    display: { xs: "none", sm: "none", md: "none", lg: "table-cell" },
+                                                }}
+                                            >
+                                                <Stack direction="row" gap={1} alignItems="center">
+                                                    <Typography>{formatMs(track.duration_ms)}</Typography>
+                                                    <IconButton
+                                                        size="small"
+                                                        aria-label="메뉴"
+                                                        sx={{
+                                                            "& svg": { fontSize: 20 },
+                                                            color: "#1db954",
+                                                            opacity: 0,
+                                                            transition: "opacity 0.2s",
+                                                            ".MuiTableRow-hover:hover &": { opacity: 1 },
+                                                        }}
+                                                    >
+                                                        <MoreHorizIcon />
+                                                    </IconButton>
+                                                </Stack>
+                                            </TableCell>
+                                        </BodyRow>
                                     );
                                 })
                             )}
-
-                            {/* 무한 스크롤 트리거 */}
                             {hasNextPage && (
                                 <TableRow>
                                     <TableCell colSpan={4} align="center" ref={ref}>
                                         {isFetchingNextPage && (
                                             <CircularProgress size={24} sx={{ color: "#d9d9d9" }} />
-                                        )}                                </TableCell>
+                                        )}
+                                    </TableCell>
                                 </TableRow>
                             )}
                         </TableBody>
                     </Table>
                 </Container>
             </Box>
-
         </Box >
     );
 };

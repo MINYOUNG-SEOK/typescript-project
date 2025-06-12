@@ -2,7 +2,7 @@ import { useInfiniteQuery } from "@tanstack/react-query";
 import { getPlaylistItems } from "../apis/playlistApi";
 import { GetPlaylistItemsRequest } from "../models/playlist";
 
-const PAGE_SIZE = 20;
+const PAGE_SIZE = 10;
 
 const useGetPlaylistItems = (params: GetPlaylistItemsRequest) => {
     return useInfiniteQuery({
