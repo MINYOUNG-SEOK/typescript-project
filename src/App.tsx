@@ -8,6 +8,7 @@ const AppLayout = React.lazy(() => import('./layout/AppLayout'));
 const HomePage = React.lazy(() => import("./pages/HomePage/HomePage"));
 const SearchPage = React.lazy(() => import("./pages/SearchPage/SearchPage"));
 const SearchResultPage = React.lazy(() => import("./pages/SearchResultPage/SearchResultPage"));
+const FavoritesPage = React.lazy(() => import("./pages/FavoritesPage/FavoritesPage"));
 const PlaylistPage = React.lazy(() => import("./pages/PlaylistPage/PlaylistPage"));
 const PlaylistDetailPage = React.lazy(() => import("./pages/PlaylistDetailPage/PlaylistDetailPage"));
 
@@ -37,6 +38,7 @@ function App() {
           <Route index element={<HomePage />} />
           <Route path="search" element={<SearchPage />} />
           <Route path="search/:keyword" element={<SearchResultPage />} />
+          <Route path="favorites" element={<FavoritesPage />} />
           <Route path="playlist" element={<PlaylistPage />} />
           <Route path="playlist/:id" element={<PlaylistDetailPage />} />
         </Route>

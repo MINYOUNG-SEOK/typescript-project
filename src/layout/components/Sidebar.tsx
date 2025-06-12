@@ -5,6 +5,10 @@ import {
     Typography,
     Drawer,
     useMediaQuery,
+    ListItemIcon,
+    ListItemText,
+    ListItem,
+    List,
 } from "@mui/material";
 import HomeIcon from "@mui/icons-material/Home";
 import SearchIcon from "@mui/icons-material/Search";
@@ -14,6 +18,9 @@ import { motion } from "framer-motion";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import { useInView } from "react-intersection-observer";
 import PlayList from "./PlayList";
+import { Link as RouterLink } from "react-router-dom";
+
+import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 
 const Root = styled("aside")<{ width: number }>(({ width }) => ({
     width,
@@ -39,7 +46,7 @@ const ResizeHandle = styled("div")({
     "&:hover": {
         backgroundColor: "#f0f0f0",
     },
-    "::before": {
+    "&::before": {
         content: '""',
         width: 3,
         height: 40,
@@ -158,18 +165,24 @@ const Sidebar: React.FC<SidebarProps> = ({ open, onClose }) => {
                 <NavList>
                     <li>
                         <StyledLink to="/" end onClick={onClose}>
-                            <HomeIcon fontSize="small" sx={{ color: "#1db954" }} />
+                            <HomeIcon fontSize="medium" sx={{ color: "#1db954" }} />
                             <Typography fontSize="1rem" fontWeight={500}>홈</Typography>
                         </StyledLink>
                     </li>
                     <li>
                         <StyledLink to="/search" onClick={onClose}>
-                            <SearchIcon fontSize="small" sx={{ color: "#1db954" }} />
+                            <SearchIcon fontSize="medium" sx={{ color: "#1db954" }} />
                             <Typography fontSize="1rem" fontWeight={500}>검색하기</Typography>
                         </StyledLink>
                     </li>
                     <li>
-                        <StyledNavItem onClick={() => setIsPlaylistOpen((prev) => !prev)}>
+                        <StyledLink to="/favorites" onClick={onClose}>
+                            <FavoriteBorderIcon fontSize="small" sx={{ color: "#1db954" }} />
+                            <Typography fontSize="1rem" fontWeight={500}>즐겨찾는 노래</Typography>
+                        </StyledLink>
+                    </li>
+                    <li>
+                        <StyledNavItem onClick={() => setIsPlaylistOpen(p => !p)}>
                             <LibraryMusicIcon fontSize="medium" sx={{ color: "#1db954" }} />
                             <Typography fontSize="1rem" fontWeight={500}>나의 플레이리스트</Typography>
                             <motion.div
