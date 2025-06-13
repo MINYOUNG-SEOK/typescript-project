@@ -1,9 +1,9 @@
 import React, { useState, KeyboardEvent, useEffect } from 'react'
 import {
     Box,
-    Paper,
     TextField,
     InputAdornment,
+    IconButton,
     Typography,
     CircularProgress,
     List,
@@ -11,13 +11,19 @@ import {
     ListItemAvatar,
     Avatar,
     ListItemText,
+    Button,
 } from '@mui/material'
 import SearchIcon from '@mui/icons-material/Search'
+import CloseIcon from '@mui/icons-material/Close'
 import { useInView } from 'react-intersection-observer'
 import useSearchItemsByKeyword from '../../../hooks/useSearchItemsByKeyword'
 import { SEARCH_TYPE } from '../../../models/search'
 
-const EmptyPlaylistWithSearch: React.FC = () => {
+interface EmptyPlaylistWithSearchProps {
+    onClose?: () => void
+}
+
+const EmptyPlaylistWithSearch: React.FC<EmptyPlaylistWithSearchProps> = ({ onClose }) => {
     const [inputValue, setInputValue] = useState('')
     const [keyword, setKeyword] = useState('')
 
@@ -30,102 +36,94 @@ const EmptyPlaylistWithSearch: React.FC = () => {
         isFetchingNextPage,
     } = useSearchItemsByKeyword({ q: keyword, type: [SEARCH_TYPE.Track] })
 
-    const items =
-        data?.pages.flatMap(page => page.tracks?.items || []) ?? []
+    const items = data?.pages.flatMap(page => page.tracks?.items || []) ?? []
 
     useEffect(() => {
-        if (inView && hasNextPage) {
-            fetchNextPage()
-        }
+        if (inView && hasNextPage) fetchNextPage()
     }, [inView, hasNextPage, fetchNextPage])
 
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setInputValue(e.target.value)
-    }
-
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => setInputValue(e.target.value)
     const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
-        if (e.key === 'Enter') {
-            setKeyword(inputValue.trim())
-        }
+        if (e.key === 'Enter') setKeyword(inputValue.trim())
     }
+    const handleSearchClick = () => setKeyword(inputValue.trim())
 
     return (
-        <Box
-            sx={{
-                display: 'flex',
-                justifyContent: 'center',
-                py: 6,
-                bgcolor: '#ffffff',
-            }}
-        >
-            <Paper elevation={1} sx={{ width: '100%', maxWidth: 600, p: 3, borderRadius: 2 }}>
+        <Box sx={{ width: '100%', bgcolor: '#ffffff', position: 'relative' }}>
+
+
+            <Box sx={{ maxWidth: 600, mx: 'auto', mb: 2 }}>
                 <TextField
                     fullWidth
-                    variant="outlined"
-                    placeholder="검색어를 입력하고 Enter"
+                    placeholder="곡, 아티스트, 앨범 검색"
                     value={inputValue}
                     onChange={handleChange}
                     onKeyDown={handleKeyDown}
+                    variant="outlined"
                     InputProps={{
-                        startAdornment: (
-                            <InputAdornment position="start">
-                                <SearchIcon color="action" />
+                        endAdornment: (
+                            <InputAdornment position="end">
+                                <IconButton onClick={handleSearchClick} edge="end" aria-label="검색">
+                                    <SearchIcon />
+                                </IconButton>
                             </InputAdornment>
                         ),
+                        sx: { borderRadius: 2 },
                     }}
-                    sx={{ mb: 2, '& .MuiOutlinedInput-root': { borderRadius: 2 } }}
                 />
+            </Box>
 
-                {isLoading && (
-                    <Box sx={{ display: 'flex', justifyContent: 'center', py: 4 }}>
-                        <CircularProgress />
-                    </Box>
-                )}
+            {isLoading && (
+                <Box sx={{ textAlign: 'center', py: 3 }}>
+                    <CircularProgress sx={{ color: "#d9d9d9" }} />
+                </Box>
+            )}
 
-                {!isLoading && !keyword && (
-                    <Typography align="center" color="text.secondary" sx={{ py: 4 }}>
-                        검색어를 입력해 주세요
-                    </Typography>
-                )}
+            {!isLoading && keyword && items.length === 0 && (
+                <Typography align="center" color="text.secondary" sx={{ py: 3 }}>
+                    “{keyword}”에 맞는 결과가 없습니다.
+                </Typography>
+            )}
 
-                {!isLoading && keyword && items.length === 0 && (
-                    <Typography align="center" color="text.secondary" sx={{ py: 4 }}>
-                        “{keyword}”에 맞는 검색 결과가 없습니다.
-                    </Typography>
-                )}
-
-                {!isLoading && items.length > 0 && (
-                    <List sx={{ maxHeight: 400, overflow: 'auto' }}>
-                        {items.map(track => (
-                            <ListItem key={track.id} alignItems="flex-start">
-                                <ListItemAvatar>
-                                    <Avatar
-                                        variant="rounded"
-                                        src={track.album?.images?.[2]?.url}
-                                        alt={track.name}
-                                    />
-                                </ListItemAvatar>
-                                <ListItemText
-                                    primary={track.name}
-                                    secondary={
-                                        <>
-                                            <Typography component="span" variant="body2">
-                                                {track.artists.map(a => a.name).join(', ')}
-                                            </Typography>
-                                            {' — ' + track.album?.name}
-                                        </>
-                                    }
+            {items.length > 0 && (
+                <List sx={{ maxHeight: 400, overflow: 'auto' }}>
+                    {items.map(track => (
+                        <ListItem
+                            key={track.id}
+                            secondaryAction={
+                                <Button
+                                    size="small"
+                                    variant="contained"
+                                    onClick={() => console.log('추가:', track.id)}
+                                >
+                                    추가
+                                </Button>
+                            }
+                        >
+                            <ListItemAvatar>
+                                <Avatar
+                                    variant="rounded"
+                                    src={track.album?.images?.[2]?.url}
+                                    alt={track.name}
+                                    sx={{ width: 48, height: 48, mr: 2 }}
                                 />
-                            </ListItem>
-                        ))}
-                        {hasNextPage && (
-                            <Box ref={ref} sx={{ display: 'flex', justifyContent: 'center', py: 2 }}>
-                                {isFetchingNextPage ? <CircularProgress size={24} /> : null}
-                            </Box>
-                        )}
-                    </List>
-                )}
-            </Paper>
+                            </ListItemAvatar>
+                            <ListItemText
+                                primary={track.name}
+                                secondaryTypographyProps={{ noWrap: true }}
+                                secondary={
+                                    track.artists?.map(a => a.name).join(', ') + ' — ' + track.album?.name
+                                }
+                            />
+                        </ListItem>
+                    ))}
+                    {hasNextPage && (
+                        <Box ref={ref} sx={{ textAlign: 'center', py: 2 }}>
+                            {isFetchingNextPage && <CircularProgress size={20} sx={{ color: "#d9d9d9" }} />}
+                        </Box>
+                    )}
+                </List>
+            )}
         </Box>
     )
 }

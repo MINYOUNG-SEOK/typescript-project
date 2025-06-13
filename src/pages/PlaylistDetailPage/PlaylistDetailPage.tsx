@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { Navigate, useParams } from "react-router-dom";
 import {
     Box,
@@ -16,7 +16,12 @@ import {
     IconButton,
     styled,
     Skeleton,
+    Dialog,
+    DialogTitle,
+    DialogContent,
+    keyframes,
 } from "@mui/material";
+import CloseIcon from '@mui/icons-material/Close'
 import PlayArrowIcon from "@mui/icons-material/PlayArrow";
 import ShuffleIcon from "@mui/icons-material/Shuffle";
 import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
@@ -45,6 +50,32 @@ const GreenButton = styled(Button)({
     color: "#fff",
     "&:hover": { backgroundColor: "#1aa34a" },
 });
+
+const AddButton = styled(Button)(({ theme }) => ({
+    backgroundColor: '#fff',
+    color: '#1db954',
+    border: '1px solid #1db954',
+    textTransform: 'none',
+    fontWeight: 600,
+    borderRadius: 8,
+    paddingInline: 24,
+    boxShadow: 'none',
+    transition: 'background-color 0.3s, box-shadow 0.3s',
+    '&:hover': {
+        backgroundColor: '#f0faf1',
+    },
+    '&.highlight': {
+        animation: `${pulse} 2s infinite`,
+    },
+}))
+
+const pulse = keyframes`
+  0%   { box-shadow: 0 0 0 0 rgba(29,185,84,0.7); }
+  70%  { box-shadow: 0 0 0 10px rgba(29,185,84,0); }
+  100% { box-shadow: 0 0 0 0 rgba(29,185,84,0); }
+`
+
+
 
 const HeaderTableCell = styled(TableCell)({
     color: "#6e6e73",
@@ -78,6 +109,11 @@ const headerWrapperSx = {
 const PlaylistDetailPage: React.FC = () => {
     const { id } = useParams<{ id: string }>();
     const accessToken = localStorage.getItem("access_token");
+
+    // 모달 열림 상태
+    const [openSearch, setOpenSearch] = useState(false);
+    const handleOpen = () => setOpenSearch(true);
+    const handleClose = () => setOpenSearch(false);
 
     if (!accessToken) {
         return (
@@ -222,202 +258,232 @@ const PlaylistDetailPage: React.FC = () => {
                         >
                             임의 재생
                         </GreenButton>
+                        <AddButton
+                            className={playlist.tracks.total === 0 ? "highlight" : ""}
+                            onClick={handleOpen}>노래 추가
+                        </AddButton>
                     </Stack>
                 </Stack>
             </Container>
 
-            {/* 트랙 리스트 */}
-            <Box
-                sx={{
-                    mt: { xs: 2, md: 4 },
-                    flex: "1 1 auto",
-                    overflowY: { xs: "visible", md: "auto" },
-                    height: { xs: "auto", md: "100%" },
-                    scrollbarWidth: "none",
-                    "&::-webkit-scrollbar": { display: "none" },
-                }}
-            >
-                <Container {...containerProps} sx={{ px: { xs: 2, sm: 3, md: 4 } }}>
-                    <Table
-                        sx={{
-                            width: "100%",
-                            tableLayout: "fixed",
-                            "& th, & td": { border: "none", py: 1.25 },
-                        }}
-                    >
-                        <TableHead>
-                            <TableRow>
-                                <HeaderTableCell sx={{ width: { xs: "100%", md: "35%" }, whiteSpace: "nowrap" }}>
-                                    노래
-                                </HeaderTableCell>
-                                <HeaderTableCell sx={{ width: "40%", display: { xs: "none", md: "table-cell" } }}>
-                                    아티스트
-                                </HeaderTableCell>
-                                <HeaderTableCell sx={{ width: "32%", display: { xs: "none", sm: "none", md: "table-cell" } }}>
-                                    앨범
-                                </HeaderTableCell>
-                                <HeaderTableCell
-                                    align="left"
-                                    sx={{ width: 80, display: { xs: "none", sm: "none", md: "none", lg: "table-cell" } }}
-                                >
-                                    시간
-                                </HeaderTableCell>
-                            </TableRow>
-                        </TableHead>
-                        <TableBody>
-                            {playlist.tracks.total === 0 ? (
+            {/* 트랙 리스트 or 빈 안내 */}
+            <Container {...containerProps} sx={{ px: { xs: 2, sm: 3, md: 4 } }}>
+                {playlist.tracks.total === 0 ? (
+                    <Box textAlign="center" py={6}>
+                        <Typography variant="h6" gutterBottom>
+                            플레이리스트가 비어있습니다.
+                        </Typography>
+                        <Typography color="text.secondary" gutterBottom>
+                            “노래 추가” 버튼을 눌러 플레이 리스트에 추가할 곡을 찾아보세요.
+                        </Typography>
+                    </Box>
+                ) : (
+                    <Box sx={{ width: '100%' }}>
+                        <Table
+                            sx={{
+                                width: "100%",
+                                tableLayout: "fixed",
+                                "& th, & td": { border: "none", py: 1.25 },
+                            }}
+                        >                            <TableHead>
                                 <TableRow>
-                                    <TableCell colSpan={4} align="center" sx={{ py: 4 }}>
-                                        <Typography variant="h6" color="text.secondary">
-                                            <EmptyPlaylistWithSearch />
-                                        </Typography>
-                                    </TableCell>
+                                    <HeaderTableCell sx={{ width: { xs: "100%", md: "35%" }, whiteSpace: "nowrap" }}>
+                                        노래
+                                    </HeaderTableCell>
+                                    <HeaderTableCell sx={{ width: "40%", display: { xs: "none", md: "table-cell" } }}>
+                                        아티스트
+                                    </HeaderTableCell>
+                                    <HeaderTableCell sx={{ width: "32%", display: { xs: "none", sm: "none", md: "table-cell" } }}>
+                                        앨범
+                                    </HeaderTableCell>
+                                    <HeaderTableCell
+                                        align="left"
+                                        sx={{ width: 80, display: { xs: "none", sm: "none", md: "none", lg: "table-cell" } }}
+                                    >
+                                        시간
+                                    </HeaderTableCell>
                                 </TableRow>
-                            ) : (
-                                <>
-                                    {data?.pages.flatMap((page, pageIndex) =>
-                                        page.items.map((item: any, i: number) => {
-                                            const track = item.track;
-                                            const index = pageIndex * 20 + i;
-                                            const isFav = favorites.some((t: any) => t.id === track.id);
-                                            return (
-                                                <BodyRow
-                                                    key={track.id ?? index}
-                                                    sx={{
-                                                        backgroundColor: index % 2 === 0 ? "#FAFAFA" : "transparent",
-                                                        "&:hover .overlay": { opacity: 1 },
+                            </TableHead>
+                            <TableBody>
 
+                                {data?.pages.flatMap((page, pageIndex) =>
+                                    page.items.map((item: any, i: number) => {
+                                        const track = item.track;
+                                        const index = pageIndex * 20 + i;
+                                        const isFav = favorites.some((t: any) => t.id === track.id);
+                                        return (
+                                            <BodyRow
+                                                key={track.id ?? index}
+                                                sx={{
+                                                    backgroundColor: index % 2 === 0 ? "#FAFAFA" : "transparent",
+                                                    "&:hover .overlay": { opacity: 1 },
+
+                                                }}
+                                            >
+                                                <TableCell
+                                                    sx={{
+                                                        pl: 2,
+                                                        position: "relative",
+                                                        display: "flex",
+                                                        alignItems: "center",
                                                     }}
                                                 >
-                                                    <TableCell
+                                                    <IconButton
+                                                        className="favBtn"
+                                                        onClick={() => toggleFavorite(track)} disableRipple
                                                         sx={{
-                                                            pl: 2,
-                                                            position: "relative",
-                                                            display: "flex",
-                                                            alignItems: "center",
+                                                            backgroundColor: "transparent",
+                                                            position: "absolute",
+                                                            left: -40,
+                                                            top: "50%",
+                                                            transform: "translateY(-50%)",
+                                                            opacity: isFav ? 1 : 0,
+                                                            transition: "opacity 0.2s",
+
                                                         }}
+                                                        aria-label="즐겨찾기"
                                                     >
-                                                        <IconButton
-                                                            className="favBtn"
-                                                            onClick={() => toggleFavorite(track)} disableRipple
-                                                            sx={{
-                                                                backgroundColor: "transparent",
-                                                                position: "absolute",
-                                                                left: -40,
-                                                                top: "50%",
-                                                                transform: "translateY(-50%)",
-                                                                opacity: isFav ? 1 : 0,
-                                                                transition: "opacity 0.2s",
+                                                        {isFav
+                                                            ? <FavoriteIcon sx={{ color: "red" }} />
+                                                            : <FavoriteBorderIcon sx={{ color: "red" }} />
+                                                        }
+                                                    </IconButton>
 
-                                                            }}
-                                                            aria-label="즐겨찾기"
-                                                        >
-                                                            {isFav
-                                                                ? <FavoriteIcon sx={{ color: "red" }} />
-                                                                : <FavoriteBorderIcon sx={{ color: "red" }} />
-                                                            }
-                                                        </IconButton>
-
-                                                        <Box sx={{ position: "relative", display: "inline-block" }}>
-                                                            <ImageWithFallback
-                                                                src={track.album?.images?.[2]?.url}
-                                                                fallbackSrc="https://placehold.co/40x40?text=No+Image"
-                                                                width={50}
-                                                                height={50}
-                                                                alt={track.name}
-                                                                style={{ borderRadius: 4, objectFit: "cover" }}
-                                                            />
-                                                            <Box
-                                                                className="overlay"
-                                                                sx={{
-                                                                    position: "absolute",
-                                                                    top: 0,
-                                                                    left: 0,
-                                                                    width: "100%",
-                                                                    height: "100%",
-                                                                    display: "flex",
-                                                                    alignItems: "center",
-                                                                    justifyContent: "center",
-                                                                    borderRadius: 4,
-                                                                    opacity: 0,
-                                                                }}
-                                                            >
-                                                                <PlayArrowIcon sx={{ color: "#fff", fontSize: 32 }} />
-                                                            </Box>
-                                                        </Box>
-
+                                                    <Box sx={{ position: "relative", display: "inline-block" }}>
+                                                        <ImageWithFallback
+                                                            src={track.album?.images?.[2]?.url}
+                                                            fallbackSrc="https://placehold.co/40x40?text=No+Image"
+                                                            width={50}
+                                                            height={50}
+                                                            alt={track.name}
+                                                            style={{ borderRadius: 4, objectFit: "cover" }}
+                                                        />
                                                         <Box
+                                                            className="overlay"
                                                             sx={{
-                                                                ml: 2,
-                                                                overflow: "hidden",
-                                                                textOverflow: "ellipsis",
-                                                                whiteSpace: "nowrap",
+                                                                position: "absolute",
+                                                                top: 0,
+                                                                left: 0,
+                                                                width: "100%",
+                                                                height: "100%",
+                                                                display: "flex",
+                                                                alignItems: "center",
+                                                                justifyContent: "center",
+                                                                borderRadius: 4,
+                                                                opacity: 0,
                                                             }}
                                                         >
-                                                            <Typography fontWeight={600} noWrap>
-                                                                {track.name}
-                                                            </Typography>
-                                                            <Typography
-                                                                noWrap
-                                                                sx={{ display: { xs: "block", md: "none" } }}
-                                                            >
-                                                                {track.artists.map((a: any) => a.name).join(", ")}
-                                                            </Typography>
+                                                            <PlayArrowIcon sx={{ color: "#fff", fontSize: 32 }} />
                                                         </Box>
-                                                    </TableCell>
+                                                    </Box>
 
-                                                    <TableCell sx={{ overflow: "hidden", display: { xs: "none", md: "table-cell" } }}>
-                                                        <Typography
-                                                            noWrap
-                                                            sx={{ overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}
-                                                        >
-                                                            {track.artists.map((a: any) => a.name).join(", ")}
-                                                        </Typography>
-                                                    </TableCell>
-                                                    <TableCell
+                                                    <Box
                                                         sx={{
+                                                            ml: 2,
                                                             overflow: "hidden",
                                                             textOverflow: "ellipsis",
                                                             whiteSpace: "nowrap",
-                                                            display: { xs: "none", sm: "none", md: "table-cell" },
                                                         }}
                                                     >
-                                                        <Typography noWrap sx={{ overflow: "hidden", textOverflow: "ellipsis" }}>
-                                                            {track.album?.name}
+                                                        <Typography fontWeight={600} noWrap>
+                                                            {track.name}
                                                         </Typography>
-                                                    </TableCell>
-                                                    <TableCell
-                                                        align="left"
-                                                        sx={{
-                                                            pr: 1,
-                                                            verticalAlign: "middle",
-                                                            display: { xs: "none", sm: "none", md: "none", lg: "table-cell" },
-                                                        }}
-                                                    >
-                                                        <Stack direction="row" gap={1} alignItems="center">
-                                                            <Typography>{formatMs(track.duration_ms)}</Typography>
+                                                        <Typography
+                                                            noWrap
+                                                            sx={{ display: { xs: "block", md: "none" } }}
+                                                        >
+                                                            {track.artists.map((a: any) => a.name).join(", ")}
+                                                        </Typography>
+                                                    </Box>
+                                                </TableCell>
 
-                                                        </Stack>
-                                                    </TableCell>
-                                                </BodyRow>
-                                            );
-                                        })
-                                    )}
-                                    {hasNextPage && (
-                                        <TableRow>
-                                            <TableCell colSpan={4} align="center" ref={ref}>
-                                                {isFetchingNextPage && (
-                                                    <CircularProgress size={24} sx={{ color: "#d9d9d9" }} />
-                                                )}
-                                            </TableCell>
-                                        </TableRow>
-                                    )}
-                                </>
-                            )}
-                        </TableBody>
-                    </Table>
-                </Container>
-            </Box>
+                                                <TableCell sx={{ overflow: "hidden", display: { xs: "none", md: "table-cell" } }}>
+                                                    <Typography
+                                                        noWrap
+                                                        sx={{ overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}
+                                                    >
+                                                        {track.artists.map((a: any) => a.name).join(", ")}
+                                                    </Typography>
+                                                </TableCell>
+                                                <TableCell
+                                                    sx={{
+                                                        overflow: "hidden",
+                                                        textOverflow: "ellipsis",
+                                                        whiteSpace: "nowrap",
+                                                        display: { xs: "none", sm: "none", md: "table-cell" },
+                                                    }}
+                                                >
+                                                    <Typography noWrap sx={{ overflow: "hidden", textOverflow: "ellipsis" }}>
+                                                        {track.album?.name}
+                                                    </Typography>
+                                                </TableCell>
+                                                <TableCell
+                                                    align="left"
+                                                    sx={{
+                                                        pr: 1,
+                                                        verticalAlign: "middle",
+                                                        display: { xs: "none", sm: "none", md: "none", lg: "table-cell" },
+                                                    }}
+                                                >
+                                                    <Stack direction="row" gap={1} alignItems="center">
+                                                        <Typography>{formatMs(track.duration_ms)}</Typography>
+
+                                                    </Stack>
+                                                </TableCell>
+                                            </BodyRow>
+                                        );
+                                    })
+                                )}
+                                {hasNextPage && (
+                                    <TableRow>
+                                        <TableCell colSpan={4} align="center" ref={ref}>
+                                            {isFetchingNextPage && (
+                                                <CircularProgress size={24} sx={{ color: "#d9d9d9" }} />
+                                            )}
+                                        </TableCell>
+                                    </TableRow>
+                                )}
+                            </TableBody>
+                        </Table>
+                    </Box>
+                )}
+            </Container>
+
+
+            {/* 검색 모달 */}
+            <Dialog
+                open={openSearch}
+                onClose={handleClose}
+                fullWidth
+                maxWidth="sm"
+                PaperProps={{
+                    sx: {
+                        bgcolor: '#ffffff',
+                        boxShadow: 24,
+                        borderRadius: 2,
+                    },
+                }}
+            >
+                <DialogTitle sx={{ m: 0, p: 2, position: 'relative' }}>
+                    플레이리스트에 곡 추가
+                    <IconButton
+                        aria-label="닫기"
+                        onClick={handleClose}
+                        sx={{
+                            position: 'absolute',
+                            right: 8,
+                            top: 8,
+                            color: (theme) => theme.palette.grey[500],
+                        }}
+                    >
+                        <CloseIcon />
+                    </IconButton>
+                </DialogTitle>
+
+                <DialogContent dividers sx={{ bgcolor: '#ffffff' }}>
+                    <EmptyPlaylistWithSearch onClose={handleClose} />
+                </DialogContent>
+            </Dialog>
         </Box>
     );
 };
