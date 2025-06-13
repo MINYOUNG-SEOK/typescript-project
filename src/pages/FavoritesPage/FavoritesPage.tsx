@@ -223,7 +223,7 @@ const FavoritesPage: React.FC = () => {
                                                         display: "flex",
                                                         alignItems: "center",
                                                         justifyContent: "center",
-                                                        borderRadius: 4,
+                                                        borderRadius: 8,
                                                         opacity: 0,
                                                         transition: "opacity 0.2s",
                                                         "&:hover": { opacity: 1 },

@@ -22,6 +22,7 @@ import {
     keyframes,
 } from "@mui/material";
 import CloseIcon from '@mui/icons-material/Close'
+import AddIcon from '@mui/icons-material/Add'
 import PlayArrowIcon from "@mui/icons-material/PlayArrow";
 import ShuffleIcon from "@mui/icons-material/Shuffle";
 import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
@@ -59,6 +60,7 @@ const AddButton = styled(Button)(({ theme }) => ({
     fontWeight: 600,
     borderRadius: 8,
     paddingInline: 24,
+    gap: 3,
     boxShadow: 'none',
     transition: 'background-color 0.3s, box-shadow 0.3s',
     '&:hover': {
@@ -260,7 +262,8 @@ const PlaylistDetailPage: React.FC = () => {
                         </GreenButton>
                         <AddButton
                             className={playlist.tracks.total === 0 ? "highlight" : ""}
-                            onClick={handleOpen}>노래 추가
+                            onClick={handleOpen}>  <AddIcon fontSize="small" />
+                            추가
                         </AddButton>
                     </Stack>
                 </Stack>
@@ -274,7 +277,7 @@ const PlaylistDetailPage: React.FC = () => {
                             플레이리스트가 비어있습니다.
                         </Typography>
                         <Typography color="text.secondary" gutterBottom>
-                            “노래 추가” 버튼을 눌러 플레이 리스트에 추가할 곡을 찾아보세요.
+                            상단에 “추가” 버튼을 눌러 플레이 리스트에 추가할 곡을 찾아보세요.
                         </Typography>
                     </Box>
                 ) : (
@@ -356,7 +359,7 @@ const PlaylistDetailPage: React.FC = () => {
                                                             width={50}
                                                             height={50}
                                                             alt={track.name}
-                                                            style={{ borderRadius: 4, objectFit: "cover" }}
+                                                            style={{ borderRadius: 8, objectFit: "cover" }}
                                                         />
                                                         <Box
                                                             className="overlay"
