@@ -111,11 +111,10 @@ const EmptyPlaylistWithSearch: React.FC<EmptyPlaylistWithSearchProps> = ({ onClo
                     sx={{
                         maxHeight: 400,
                         overflow: 'auto',
+                        px: 0,
                         scrollbarWidth: 'none',
                         '-ms-overflow-style': 'none',
-                        '&::-webkit-scrollbar': {
-                            display: 'none',
-                        },
+                        '&::-webkit-scrollbar': { display: 'none' },
                     }}
                 >
                     {items.map(track => (
@@ -123,7 +122,7 @@ const EmptyPlaylistWithSearch: React.FC<EmptyPlaylistWithSearchProps> = ({ onClo
                             key={track.id}
                             // disableGutters
                             alignItems="flex-start"
-                            sx={{ '& .MuiListItemText-root': { pr: '80px' } }}
+                            sx={{ '& .MuiListItemText-root': { pr: '60px' } }}
                             secondaryAction={
                                 <AddTrackButton type="button" onClick={() => console.log('추가:', track.id)}>
                                     추가
@@ -155,6 +154,10 @@ const EmptyPlaylistWithSearch: React.FC<EmptyPlaylistWithSearchProps> = ({ onClo
                                             overflow: 'hidden',
                                             textOverflow: 'ellipsis',
                                             whiteSpace: 'nowrap',
+                                            fontSize: '1rem',
+                                            '@media (max-width:600px)': {
+                                                fontSize: '0.875rem',
+                                            },
                                         },
                                     },
                                     secondary: {
@@ -165,7 +168,8 @@ const EmptyPlaylistWithSearch: React.FC<EmptyPlaylistWithSearchProps> = ({ onClo
                                             whiteSpace: 'nowrap',
                                         },
                                     },
-                                }}
+                                }
+                                }
                             />
                         </ListItem>
                     ))}

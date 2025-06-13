@@ -50,6 +50,10 @@ const GreenButton = styled(Button)({
     backgroundColor: "#1db954",
     color: "#fff",
     "&:hover": { backgroundColor: "#1aa34a" },
+    '@media (max-width:400px)': {
+        paddingInline: 12,
+        fontSize: '0.875rem',
+    },
 });
 
 const AddButton = styled(Button)(({ theme }) => ({
@@ -68,6 +72,10 @@ const AddButton = styled(Button)(({ theme }) => ({
     },
     '&.highlight': {
         animation: `${pulse} 2s infinite`,
+    },
+    '@media (max-width:400px)': {
+        paddingInline: 12,
+        fontSize: '0.875rem',
     },
 }))
 
