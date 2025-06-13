@@ -78,7 +78,7 @@ const Title = styled(Typography)({
     fontSize: "1.4rem",
     fontWeight: 700,
     marginBottom: "24px",
-    color: "#1db954",
+    // color: "#1db954",
 });
 
 const NavList = styled("ul")({
@@ -102,7 +102,7 @@ const StyledLink = styled(NavLink)(({ theme }) => ({
     transition: "background 0.2s, color 0.2s",
     "&:hover": { backgroundColor: "#f9f9f9" },
     "&.active": {
-        backgroundColor: "#1db95420",
+        backgroundColor: "#f2f2f2",
         color: theme.palette.primary.main,
     },
 }));

@@ -264,142 +264,154 @@ const PlaylistDetailPage: React.FC = () => {
                             </TableRow>
                         </TableHead>
                         <TableBody>
-                            {data?.pages.flatMap((page, pageIndex) =>
-                                page.items.map((item: any, i: number) => {
-                                    const track = item.track;
-                                    const index = pageIndex * 20 + i;
-                                    const isFav = favorites.some((t: any) => t.id === track.id);
-                                    return (
-                                        <BodyRow
-                                            key={track.id ?? index}
-                                            sx={{
-                                                backgroundColor: index % 2 === 0 ? "#FAFAFA" : "transparent",
-                                                "&:hover .overlay": { opacity: 1 },
-
-                                            }}
-                                        >
-                                            <TableCell
-                                                sx={{
-                                                    pl: 2,
-                                                    position: "relative",
-                                                    display: "flex",
-                                                    alignItems: "center",
-                                                }}
-                                            >
-                                                <IconButton
-                                                    className="favBtn"
-                                                    onClick={() => toggleFavorite(track)} disableRipple
-                                                    sx={{
-                                                        backgroundColor: "transparent",
-                                                        position: "absolute",
-                                                        left: -40,
-                                                        top: "50%",
-                                                        transform: "translateY(-50%)",
-                                                        opacity: isFav ? 1 : 0,
-                                                        transition: "opacity 0.2s",
-
-                                                    }}
-                                                    aria-label="즐겨찾기"
-                                                >
-                                                    {isFav
-                                                        ? <FavoriteIcon sx={{ color: "red" }} />
-                                                        : <FavoriteBorderIcon sx={{ color: "red" }} />
-                                                    }
-                                                </IconButton>
-
-                                                <Box sx={{ position: "relative", display: "inline-block" }}>
-                                                    <ImageWithFallback
-                                                        src={track.album?.images?.[2]?.url}
-                                                        fallbackSrc="https://placehold.co/40x40?text=No+Image"
-                                                        width={50}
-                                                        height={50}
-                                                        alt={track.name}
-                                                        style={{ borderRadius: 4, objectFit: "cover" }}
-                                                    />
-                                                    <Box
-                                                        className="overlay"
-                                                        sx={{
-                                                            position: "absolute",
-                                                            top: 0,
-                                                            left: 0,
-                                                            width: "100%",
-                                                            height: "100%",
-                                                            display: "flex",
-                                                            alignItems: "center",
-                                                            justifyContent: "center",
-                                                            borderRadius: 4,
-                                                            opacity: 0,
-                                                        }}
-                                                    >
-                                                        <PlayArrowIcon sx={{ color: "#fff", fontSize: 32 }} />
-                                                    </Box>
-                                                </Box>
-
-                                                <Box
-                                                    sx={{
-                                                        ml: 2,
-                                                        overflow: "hidden",
-                                                        textOverflow: "ellipsis",
-                                                        whiteSpace: "nowrap",
-                                                    }}
-                                                >
-                                                    <Typography fontWeight={600} noWrap>
-                                                        {track.name}
-                                                    </Typography>
-                                                    <Typography
-                                                        noWrap
-                                                        sx={{ display: { xs: "block", md: "none" } }}
-                                                    >
-                                                        {track.artists.map((a: any) => a.name).join(", ")}
-                                                    </Typography>
-                                                </Box>
-                                            </TableCell>
-
-                                            <TableCell sx={{ overflow: "hidden", display: { xs: "none", md: "table-cell" } }}>
-                                                <Typography
-                                                    noWrap
-                                                    sx={{ overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}
-                                                >
-                                                    {track.artists.map((a: any) => a.name).join(", ")}
-                                                </Typography>
-                                            </TableCell>
-                                            <TableCell
-                                                sx={{
-                                                    overflow: "hidden",
-                                                    textOverflow: "ellipsis",
-                                                    whiteSpace: "nowrap",
-                                                    display: { xs: "none", sm: "none", md: "table-cell" },
-                                                }}
-                                            >
-                                                <Typography noWrap sx={{ overflow: "hidden", textOverflow: "ellipsis" }}>
-                                                    {track.album?.name}
-                                                </Typography>
-                                            </TableCell>
-                                            <TableCell
-                                                align="left"
-                                                sx={{
-                                                    pr: 1,
-                                                    verticalAlign: "middle",
-                                                    display: { xs: "none", sm: "none", md: "none", lg: "table-cell" },
-                                                }}
-                                            >
-                                                <Stack direction="row" gap={1} alignItems="center">
-                                                    <Typography>{formatMs(track.duration_ms)}</Typography>
-
-                                                </Stack>
-                                            </TableCell>
-                                        </BodyRow>
-                                    );
-                                })
-                            )}
-                            {hasNextPage && (
+                            {playlist.tracks.total === 0 ? (
                                 <TableRow>
-                                    <TableCell colSpan={4} align="center" ref={ref}>
-                                        {isFetchingNextPage && (
-                                            <CircularProgress size={24} sx={{ color: "#d9d9d9" }} />
-                                        )}
+                                    <TableCell colSpan={4} align="center" sx={{ py: 4 }}>
+                                        <Typography variant="h6" color="text.secondary">
+                                            써치
+                                        </Typography>
                                     </TableCell>
                                 </TableRow>
+                            ) : (
+                                <>
+                                    {data?.pages.flatMap((page, pageIndex) =>
+                                        page.items.map((item: any, i: number) => {
+                                            const track = item.track;
+                                            const index = pageIndex * 20 + i;
+                                            const isFav = favorites.some((t: any) => t.id === track.id);
+                                            return (
+                                                <BodyRow
+                                                    key={track.id ?? index}
+                                                    sx={{
+                                                        backgroundColor: index % 2 === 0 ? "#FAFAFA" : "transparent",
+                                                        "&:hover .overlay": { opacity: 1 },
+
+                                                    }}
+                                                >
+                                                    <TableCell
+                                                        sx={{
+                                                            pl: 2,
+                                                            position: "relative",
+                                                            display: "flex",
+                                                            alignItems: "center",
+                                                        }}
+                                                    >
+                                                        <IconButton
+                                                            className="favBtn"
+                                                            onClick={() => toggleFavorite(track)} disableRipple
+                                                            sx={{
+                                                                backgroundColor: "transparent",
+                                                                position: "absolute",
+                                                                left: -40,
+                                                                top: "50%",
+                                                                transform: "translateY(-50%)",
+                                                                opacity: isFav ? 1 : 0,
+                                                                transition: "opacity 0.2s",
+
+                                                            }}
+                                                            aria-label="즐겨찾기"
+                                                        >
+                                                            {isFav
+                                                                ? <FavoriteIcon sx={{ color: "red" }} />
+                                                                : <FavoriteBorderIcon sx={{ color: "red" }} />
+                                                            }
+                                                        </IconButton>
+
+                                                        <Box sx={{ position: "relative", display: "inline-block" }}>
+                                                            <ImageWithFallback
+                                                                src={track.album?.images?.[2]?.url}
+                                                                fallbackSrc="https://placehold.co/40x40?text=No+Image"
+                                                                width={50}
+                                                                height={50}
+                                                                alt={track.name}
+                                                                style={{ borderRadius: 4, objectFit: "cover" }}
+                                                            />
+                                                            <Box
+                                                                className="overlay"
+                                                                sx={{
+                                                                    position: "absolute",
+                                                                    top: 0,
+                                                                    left: 0,
+                                                                    width: "100%",
+                                                                    height: "100%",
+                                                                    display: "flex",
+                                                                    alignItems: "center",
+                                                                    justifyContent: "center",
+                                                                    borderRadius: 4,
+                                                                    opacity: 0,
+                                                                }}
+                                                            >
+                                                                <PlayArrowIcon sx={{ color: "#fff", fontSize: 32 }} />
+                                                            </Box>
+                                                        </Box>
+
+                                                        <Box
+                                                            sx={{
+                                                                ml: 2,
+                                                                overflow: "hidden",
+                                                                textOverflow: "ellipsis",
+                                                                whiteSpace: "nowrap",
+                                                            }}
+                                                        >
+                                                            <Typography fontWeight={600} noWrap>
+                                                                {track.name}
+                                                            </Typography>
+                                                            <Typography
+                                                                noWrap
+                                                                sx={{ display: { xs: "block", md: "none" } }}
+                                                            >
+                                                                {track.artists.map((a: any) => a.name).join(", ")}
+                                                            </Typography>
+                                                        </Box>
+                                                    </TableCell>
+
+                                                    <TableCell sx={{ overflow: "hidden", display: { xs: "none", md: "table-cell" } }}>
+                                                        <Typography
+                                                            noWrap
+                                                            sx={{ overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}
+                                                        >
+                                                            {track.artists.map((a: any) => a.name).join(", ")}
+                                                        </Typography>
+                                                    </TableCell>
+                                                    <TableCell
+                                                        sx={{
+                                                            overflow: "hidden",
+                                                            textOverflow: "ellipsis",
+                                                            whiteSpace: "nowrap",
+                                                            display: { xs: "none", sm: "none", md: "table-cell" },
+                                                        }}
+                                                    >
+                                                        <Typography noWrap sx={{ overflow: "hidden", textOverflow: "ellipsis" }}>
+                                                            {track.album?.name}
+                                                        </Typography>
+                                                    </TableCell>
+                                                    <TableCell
+                                                        align="left"
+                                                        sx={{
+                                                            pr: 1,
+                                                            verticalAlign: "middle",
+                                                            display: { xs: "none", sm: "none", md: "none", lg: "table-cell" },
+                                                        }}
+                                                    >
+                                                        <Stack direction="row" gap={1} alignItems="center">
+                                                            <Typography>{formatMs(track.duration_ms)}</Typography>
+
+                                                        </Stack>
+                                                    </TableCell>
+                                                </BodyRow>
+                                            );
+                                        })
+                                    )}
+                                    {hasNextPage && (
+                                        <TableRow>
+                                            <TableCell colSpan={4} align="center" ref={ref}>
+                                                {isFetchingNextPage && (
+                                                    <CircularProgress size={24} sx={{ color: "#d9d9d9" }} />
+                                                )}
+                                            </TableCell>
+                                        </TableRow>
+                                    )}
+                                </>
                             )}
                         </TableBody>
                     </Table>
