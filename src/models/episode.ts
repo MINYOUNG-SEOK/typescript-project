@@ -16,12 +16,10 @@ export interface Episode {
     is_playable: boolean;
     type: "episode";
     uri: string;
-
     resume_point?: {
         fully_played?: boolean;
         resume_position_ms?: number;
     };
-
     restrictions?: Restriction;
     show: Show;
 }
@@ -47,3 +45,5 @@ export interface Show {
     uri: string;
     total_episodes: number;
 }
+
+export type SimplifiedEpisode = Omit<Episode, "show">;

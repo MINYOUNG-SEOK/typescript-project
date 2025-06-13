@@ -27,6 +27,7 @@ import useGetCurrentUserProfile from "../../hooks/useGetCurrentUserProfile";
 import useGetPlaylistItems from "../../hooks/useGetPlaylistItems";
 import { useInView } from "react-intersection-observer";
 import ImageWithFallback from "../../common/components/ImageWithFallbackProps";
+import EmptyPlaylistWithSearch from "./components/EmptyPlaylistWithSearch";
 
 const formatMs = (ms: number) => {
     const total = Math.floor(ms / 1000);
@@ -268,7 +269,7 @@ const PlaylistDetailPage: React.FC = () => {
                                 <TableRow>
                                     <TableCell colSpan={4} align="center" sx={{ py: 4 }}>
                                         <Typography variant="h6" color="text.secondary">
-                                            써치
+                                            <EmptyPlaylistWithSearch />
                                         </Typography>
                                     </TableCell>
                                 </TableRow>
