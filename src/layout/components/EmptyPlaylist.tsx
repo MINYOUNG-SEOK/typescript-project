@@ -7,7 +7,7 @@ const EmptyPlaylist: React.FC = () => {
     const navigate = useNavigate();
 
     const handleCreate = () => {
-        navigate("/"); // 혹은 '플레이리스트 생성' 페이지가 있다면 그쪽으로 이동
+        navigate("/");
     };
 
     return (

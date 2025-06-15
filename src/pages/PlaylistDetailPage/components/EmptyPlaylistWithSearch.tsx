@@ -71,7 +71,7 @@ const EmptyPlaylistWithSearch: React.FC<EmptyPlaylistWithSearchProps> = ({ onClo
     const handleSearchClick = () => setKeyword(inputValue.trim())
 
     return (
-        <Box sx={{ width: '100%', bgcolor: '#ffffff', position: 'relative' }}>
+        <Box sx={{ width: '100%', bgcolor: '#ffffff', position: 'relative', minHeight: 500 }}>
 
 
             <Box sx={{ maxWidth: 600, mx: 'auto', mb: 2 }}>
