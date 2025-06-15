@@ -5,6 +5,10 @@ import CloseIcon from '@mui/icons-material/Close'
 import { useInView } from 'react-intersection-observer'
 import useSearchItemsByKeyword from '../../../hooks/useSearchItemsByKeyword'
 import { SEARCH_TYPE } from '../../../models/search'
+import { SearchResponse } from '../../../models/search'
+import { Artist } from '../../../models/artist'
+import { InfiniteData } from '@tanstack/react-query'
+import { Track } from '../../../models/track'
 
 interface EmptyPlaylistWithSearchProps {
     onClose?: () => void
@@ -41,10 +45,15 @@ const EmptyPlaylistWithSearch: React.FC<EmptyPlaylistWithSearchProps> = ({ onClo
         fetchNextPage,
         hasNextPage,
         isFetchingNextPage,
-    } = useSearchItemsByKeyword({ q: keyword, type: [SEARCH_TYPE.Track] })
+    } = useSearchItemsByKeyword({ q: keyword, type: [SEARCH_TYPE.Track] }) as {
+        data: InfiniteData<SearchResponse> | undefined,
+        isLoading: boolean,
+        fetchNextPage: () => void,
+        hasNextPage: boolean | undefined,
+        isFetchingNextPage: boolean,
+    }
 
-    const items = data?.pages.flatMap(page => page.tracks?.items || []) ?? []
-
+    const items: Track[] = data?.pages.flatMap(page => page.tracks?.items ?? []) ?? []
     useEffect(() => {
         if (inView && hasNextPage) fetchNextPage()
     }, [inView, hasNextPage, fetchNextPage])
@@ -71,7 +80,7 @@ const EmptyPlaylistWithSearch: React.FC<EmptyPlaylistWithSearchProps> = ({ onClo
 
             {!isLoading && keyword && items.length === 0 && (
                 <Typography align="center" color="text.secondary" sx={{ py: 3 }}>
-                    “{keyword}”에 맞는 결과가 없습니다.
+                    “{keyword}”에 맞는 검색 결과가 없습니다.
                 </Typography>
             )}
 
@@ -113,9 +122,8 @@ const EmptyPlaylistWithSearch: React.FC<EmptyPlaylistWithSearchProps> = ({ onClo
                             <ListItemText
                                 primary={track.name}
                                 secondary={
-                                    track.artists?.map(a => a.name).join(', ') +
-                                    ' — ' +
-                                    track.album?.name
+                                    track.artists?.map((a: Artist) => a.name).join(', ') + ' — ' + track.album?.name
+
                                 }
                                 // slotProps로 typography 설정 전달
                                 slotProps={{

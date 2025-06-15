@@ -13,7 +13,10 @@ import {
 } from '@mui/material'
 import { useInView } from 'react-intersection-observer'
 import useSearchItemsByKeyword from '../../hooks/useSearchItemsByKeyword'
-import { SEARCH_TYPE } from '../../models/search'
+import { SEARCH_TYPE, SearchResponse } from '../../models/search'
+import { InfiniteData } from '@tanstack/react-query'
+import { Track } from '../../models/track'
+
 
 export default function SearchResultPage() {
     const { keyword = '' } = useParams<{ keyword: string }>()
@@ -27,9 +30,17 @@ export default function SearchResultPage() {
         fetchNextPage,
         hasNextPage,
         isFetchingNextPage,
-    } = useSearchItemsByKeyword({ q, type: [SEARCH_TYPE.Track] })
+    } = useSearchItemsByKeyword({ q, type: [SEARCH_TYPE.Track] }) as {
+        data: InfiniteData<SearchResponse> | undefined,
+        isLoading: boolean,
+        isError: boolean,
+        error: unknown,
+        fetchNextPage: () => void,
+        hasNextPage: boolean | undefined,
+        isFetchingNextPage: boolean,
+    }
 
-    const items = data?.pages.flatMap(p => p.tracks?.items || []) || []
+    const items: Track[] = data?.pages.flatMap(p => p.tracks?.items ?? []) ?? [];
 
     // 무한 스크롤
     const { ref, inView } = useInView()
@@ -42,7 +53,7 @@ export default function SearchResultPage() {
     if (isLoading) {
         return (
             <Box textAlign="center" py={4}>
-                <CircularProgress />
+                <CircularProgress sx={{ color: '#d9d9d9' }} />
             </Box>
         )
     }
@@ -57,12 +68,11 @@ export default function SearchResultPage() {
         )
     }
 
-    // 실제 렌더
     return (
         <Box p={2} maxWidth={1400} mx="auto">
             {items.length === 0 ? (
                 <Typography align="center" color="text.secondary" py={4}>
-                    “{q}” 검색 결과가 없습니다.
+                    “{q}” 에 맞는 검색 결과가 없습니다.
                 </Typography>
             ) : (
                 <>
@@ -70,19 +80,19 @@ export default function SearchResultPage() {
                         “{q}” 검색 결과
                     </Typography>
                     <List disablePadding>
-                        {items.map(track => (
-                            <ListItem key={track.id} divider>
+                        {items.map((track, index) => (
+                            <ListItem key={track.id ?? track.name ?? index} divider>
                                 <ListItemAvatar>
                                     <Avatar
                                         variant="rounded"
                                         src={track.album?.images?.[2]?.url}
-                                        alt={track.name}
+                                        alt={track.name ?? ''}
                                         sx={{ width: 48, height: 48, mr: 2 }}
                                     />
                                 </ListItemAvatar>
                                 <ListItemText
-                                    primary={track.name}
-                                    secondary={track.artists.map(a => a.name).join(', ')}
+                                    primary={track.name ?? 'Unknown'}
+                                    secondary={track.artists?.map(a => a.name).join(', ') ?? ''}
                                 />
                             </ListItem>
                         ))}

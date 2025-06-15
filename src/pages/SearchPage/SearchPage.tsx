@@ -1,13 +1,13 @@
-import React, { useState, KeyboardEvent, useEffect } from 'react'
+import React, { useState, useEffect, useMemo, KeyboardEvent } from 'react'
 import {
     Box,
     Typography,
     Chip,
     Card,
     CardActionArea,
-    CardMedia,
     CardContent,
     styled,
+    useTheme,
 } from '@mui/material'
 import CloseIcon from '@mui/icons-material/Close'
 import { useNavigate } from 'react-router-dom'
@@ -15,12 +15,12 @@ import useGetCategories from '../../hooks/useGetCategories'
 import { Category } from '../../models/browse'
 import { SearchInput } from '../../common/components/SearchInput'
 
-// 검색 페이지 각 섹션 간 간격
+// 1) 섹션 마진
 const Section = styled('section')(({ theme }) => ({
     marginTop: theme.spacing(4),
 }))
 
-// 최근 검색어 영역 가로 스크롤
+// 2) 최근 검색 스크롤
 const HorizontalScroll = styled(Box)({
     display: 'flex',
     overflowX: 'auto',
@@ -28,6 +28,7 @@ const HorizontalScroll = styled(Box)({
     gap: 12,
 })
 
+// 3) Chip 스타일
 const RecentChip = styled(Chip)(({ theme }) => ({
     height: 40,
     padding: theme.spacing(1, 1),
@@ -37,66 +38,72 @@ const RecentChip = styled(Chip)(({ theme }) => ({
         color: '#000',
         fontSize: 20,
     },
-}));
+}))
 
-// 카테고리 그리드: 반응형으로 열 수 조정
+// 4) 그리드
 const CategoryGrid = styled(Box)(({ theme }) => ({
     display: 'grid',
     gap: theme.spacing(2),
     gridTemplateColumns: 'repeat(2, 1fr)',
-    [theme.breakpoints.up('sm')]: {
-        gridTemplateColumns: 'repeat(3, 1fr)',
-    },
-    [theme.breakpoints.up('md')]: {
-        gridTemplateColumns: 'repeat(4, 1fr)',
-    },
-    [theme.breakpoints.up('lg')]: {
-        gridTemplateColumns: 'repeat(5, 1fr)',
-    },
+    [theme.breakpoints.up('sm')]: { gridTemplateColumns: 'repeat(3, 1fr)' },
+    [theme.breakpoints.up('md')]: { gridTemplateColumns: 'repeat(4, 1fr)' },
+    [theme.breakpoints.up('lg')]: { gridTemplateColumns: 'repeat(5, 1fr)' },
 }))
 
+// 랜덤 컬러 함수
+const getRandomColor = () => {
+    const h = Math.floor(Math.random() * 360)
+    const s = 40 + Math.random() * 20
+    const l = 70 + Math.random() * 10
+    return `hsl(${h}, ${s}%, ${l}%)`
+}
+
 const SearchPage: React.FC = () => {
+    const theme = useTheme()
     const [input, setInput] = useState('')
     const [recent, setRecent] = useState<string[]>([])
     const navigate = useNavigate()
     const { data: categories, isLoading: catLoading } = useGetCategories()
 
-    // 로컬스토리지에 저장된 최근 검색어 불러오기
+    // 카테고리별 랜덤 컬러 부여
+    const colored = useMemo(
+        () => categories?.map(cat => ({ ...cat, color: getRandomColor() })) ?? [],
+        [categories]
+    )
+
+    // 로컬스토리지에서 최근 검색어 로드
     useEffect(() => {
         const stored = localStorage.getItem('recentSearches')
-        if (stored) setRecent(JSON.parse(stored))
+        if (stored) {
+            try { setRecent(JSON.parse(stored)) }
+            catch { setRecent([]) }
+        }
     }, [])
 
-    // 검색 수행 함수
+    // 검색 함수
     const doSearch = (q: string) => {
-        const keyword = q.trim()
-        if (!keyword) return
-        navigate(`/search/${encodeURIComponent(keyword)}`)
-
+        const kw = q.trim()
+        if (!kw) return
+        navigate(`/search/${encodeURIComponent(kw)}`)
         setRecent(prev => {
-            const next = [keyword, ...prev.filter(x => x !== keyword)].slice(0, 10)
+            const next = [kw, ...prev.filter(x => x !== kw)].slice(0, 10)
             localStorage.setItem('recentSearches', JSON.stringify(next))
             return next
         })
     }
-
-    // 최근 검색어 삭제 함수
-    const handleDelete = (q: string) => {
+    const handleDelete = (q: string) =>
         setRecent(prev => {
             const next = prev.filter(x => x !== q)
             localStorage.setItem('recentSearches', JSON.stringify(next))
             return next
         })
-    }
-
-    // Enter 키로 검색
     const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
         if (e.key === 'Enter') doSearch(input)
     }
 
     return (
         <Box p={2} maxWidth={1400} mx="auto">
-            {/* 1) 공통 SearchInput 사용 */}
+            {/* 검색창 */}
             <SearchInput
                 value={input}
                 onChange={setInput}
@@ -104,13 +111,13 @@ const SearchPage: React.FC = () => {
                 placeholder="곡, 아티스트, 앨범명을 입력한 후 Enter 키를 눌러 검색해보세요"
             />
 
-            {/* 2) 최근 검색어 섹션 */}
+            {/* 최근 검색어 */}
             {recent.length > 0 && (
                 <Section>
-                    <Typography variant="subtitle1" gutterBottom>
-                        최근 검색
+                    <Typography variant="h6" gutterBottom>
+                        최근 검색 항목
                     </Typography>
-                    <HorizontalScroll sx={{ py: 1 }}>
+                    <HorizontalScroll>
                         {recent.map(q => (
                             <RecentChip
                                 key={q}
@@ -125,9 +132,9 @@ const SearchPage: React.FC = () => {
                 </Section>
             )}
 
-            {/* 3) 카테고리 둘러보기 섹션 */}
+            {/* 카테고리 */}
             <Section>
-                <Typography variant="subtitle1" gutterBottom>
+                <Typography variant="h6" gutterBottom>
                     카테고리 둘러보기
                 </Typography>
 
@@ -135,37 +142,34 @@ const SearchPage: React.FC = () => {
                     <Typography>로딩 중…</Typography>
                 ) : (
                     <CategoryGrid>
-                        {categories?.map((cat: Category) => (
+                        {colored.map(cat => (
                             <Card
                                 key={cat.id}
                                 sx={{
+                                    position: 'relative',
                                     borderRadius: 2,
-                                    overflow: 'hidden',
                                     aspectRatio: '16/9',
+                                    backgroundColor: cat.color,
                                     cursor: 'pointer',
                                 }}
-                                onClick={() => navigate(`/category/${encodeURIComponent(cat.id)}`)}
+                                onClick={() =>
+                                    navigate(`/category/${encodeURIComponent(cat.id)}`)
+                                }
                             >
                                 <CardActionArea sx={{ height: '100%' }}>
-                                    <CardMedia
-                                        component="img"
-                                        image={cat.icons?.[0]?.url}
-                                        alt={cat.name}
-                                        sx={{ width: '100%', height: '100%', objectFit: 'cover' }}
-                                    />
+                                    {/* 이미지 제거 → 텍스트만 출력 */}
                                     <CardContent
                                         sx={{
                                             position: 'absolute',
-                                            bottom: 0,
-                                            left: 0,
-                                            width: '100%',
-                                            bgcolor: 'rgba(0,0,0,0.4)',
-                                            color: '#fff',
-                                            py: 1,
-                                            px: 1.5,
+                                            top: theme.spacing(2),
+                                            left: theme.spacing(2),
+                                            p: 0,
                                         }}
                                     >
-                                        <Typography variant="subtitle2" noWrap>
+                                        <Typography
+                                            variant="h6"
+                                            sx={{ color: '#fff', fontWeight: 700 }}
+                                        >
                                             {cat.name}
                                         </Typography>
                                     </CardContent>
