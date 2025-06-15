@@ -336,11 +336,11 @@ const PlaylistDetailPage: React.FC = () => {
                     </Box>
                 ) : (
                     <Box sx={{ width: '100%' }}>
-                        <Table
+                        <Table size="small"
                             sx={{
                                 width: "100%",
                                 tableLayout: "fixed",
-                                "& th, & td": { border: "none", py: 1.25 },
+                                "& th, & td": { border: "none", py: 1.0 },
                             }}
                         >
                             <TableHead>
@@ -410,11 +410,11 @@ const PlaylistDetailPage: React.FC = () => {
                                                     <Box sx={{ position: "relative", display: "inline-block" }}>
                                                         <ImageWithFallback
                                                             src={track.album?.images?.[2]?.url}
-                                                            fallbackSrc="https://placehold.co/40x40?text=No+Image"
+                                                            fallbackSrc="https://placehold.co/50x50?text=No+Image"
                                                             width={50}
                                                             height={50}
                                                             alt={track.name}
-                                                            style={{ borderRadius: 8, objectFit: "cover" }}
+                                                            style={{ display: 'block', borderRadius: 8, objectFit: "cover" }}
                                                         />
                                                         <Box
                                                             className="overlay"
@@ -427,7 +427,7 @@ const PlaylistDetailPage: React.FC = () => {
                                                                 display: "flex",
                                                                 alignItems: "center",
                                                                 justifyContent: "center",
-                                                                borderRadius: 4,
+                                                                borderRadius: 8,
                                                                 opacity: 0,
                                                             }}
                                                         >
