@@ -141,10 +141,14 @@ const PlaylistDetailPage: React.FC = () => {
         // URI에서 ID만 뽑아내기
         const trackId = trackUri.split(":").pop()!;
         // 현재 로드된 모든 트랙 ID 배열
-        const existingIds =
+        const existingIds: string[] =
             playlistItemsData?.pages.flatMap(page =>
-                page.items.map(item => item.track.id)
-            ) || [];
+                page.items
+                    // track이 null이면 undefined 반환
+                    .map(item => item.track?.id)
+                    // undefined 제거
+                    .filter((id): id is string => id != null)
+            ) ?? [];
 
         if (existingIds.includes(trackId)) {
             // 중복이면 다이얼로그 열기
