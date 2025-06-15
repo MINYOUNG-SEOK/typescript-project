@@ -34,6 +34,7 @@ import useGetPlaylistItems from "../../hooks/useGetPlaylistItems";
 import { useInView } from "react-intersection-observer";
 import ImageWithFallback from "../../common/components/ImageWithFallbackProps";
 import EmptyPlaylistWithSearch from "./components/EmptyPlaylistWithSearch";
+import useAddTracksToPlaylist from "../../hooks/useAddTracksToPlaylist";
 
 const formatMs = (ms: number) => {
     const total = Math.floor(ms / 1000);
@@ -125,6 +126,22 @@ const PlaylistDetailPage: React.FC = () => {
     const handleOpen = () => setOpenSearch(true);
     const handleClose = () => setOpenSearch(false);
 
+    // 추가 뮤테이션 훅
+    const addTracksMutation = useAddTracksToPlaylist();
+
+    const handleAddTrack = (trackUri: string) => {
+        if (!id) return;
+        addTracksMutation.mutate({ playlist_id: id, uris: [trackUri], position: 0 });
+    };
+
+    useEffect(() => {
+        if (addTracksMutation.isSuccess) {
+            handleClose();
+        }
+    }, [addTracksMutation.isSuccess]);
+
+
+
     if (!accessToken) {
         return (
             <Container sx={{ mt: 8 }}>
@@ -197,8 +214,6 @@ const PlaylistDetailPage: React.FC = () => {
             </Container>
         );
     }
-
-
 
     if (isError || !playlist) {
         return (
@@ -296,7 +311,8 @@ const PlaylistDetailPage: React.FC = () => {
                                 tableLayout: "fixed",
                                 "& th, & td": { border: "none", py: 1.25 },
                             }}
-                        >                            <TableHead>
+                        >
+                            <TableHead>
                                 <TableRow>
                                     <HeaderTableCell sx={{ width: { xs: "100%", md: "35%" }, whiteSpace: "nowrap" }}>
                                         노래
@@ -324,7 +340,7 @@ const PlaylistDetailPage: React.FC = () => {
                                         const isFav = favorites.some((t: any) => t.id === track.id);
                                         return (
                                             <BodyRow
-                                                key={track.id ?? index}
+                                                key={`${pageIndex}-${track.id}`}
                                                 sx={{
                                                     backgroundColor: index % 2 === 0 ? "#FAFAFA" : "transparent",
                                                     "&:hover .overlay": { opacity: 1 },
@@ -492,7 +508,10 @@ const PlaylistDetailPage: React.FC = () => {
                 </DialogTitle>
 
                 <DialogContent dividers sx={{ bgcolor: '#ffffff' }}>
-                    <EmptyPlaylistWithSearch onClose={handleClose} />
+                    <EmptyPlaylistWithSearch
+                        onClose={handleClose}
+                        onAddTrack={handleAddTrack}
+                    />
                 </DialogContent>
             </Dialog>
         </Box>

@@ -22,6 +22,7 @@ import { SEARCH_TYPE } from '../../../models/search'
 
 interface EmptyPlaylistWithSearchProps {
     onClose?: () => void
+    onAddTrack: (trackUri: string) => void
 }
 
 
@@ -44,7 +45,7 @@ const AddTrackButton = styled('button')(({ theme }) => ({
 }))
 
 
-const EmptyPlaylistWithSearch: React.FC<EmptyPlaylistWithSearchProps> = ({ onClose }) => {
+const EmptyPlaylistWithSearch: React.FC<EmptyPlaylistWithSearchProps> = ({ onClose, onAddTrack }) => {
     const [inputValue, setInputValue] = useState('')
     const [keyword, setKeyword] = useState('')
 
@@ -113,8 +114,10 @@ const EmptyPlaylistWithSearch: React.FC<EmptyPlaylistWithSearchProps> = ({ onClo
                         overflow: 'auto',
                         px: 0,
                         scrollbarWidth: 'none',
-                        '-ms-overflow-style': 'none',
-                        '&::-webkit-scrollbar': { display: 'none' },
+                        msOverflowStyle: 'none',
+                        '&::-webkit-scrollbar': {
+                            display: 'none',
+                        },
                     }}
                 >
                     {items.map(track => (
@@ -124,7 +127,7 @@ const EmptyPlaylistWithSearch: React.FC<EmptyPlaylistWithSearchProps> = ({ onClo
                             alignItems="flex-start"
                             sx={{ '& .MuiListItemText-root': { pr: '60px' } }}
                             secondaryAction={
-                                <AddTrackButton type="button" onClick={() => console.log('추가:', track.id)}>
+                                <AddTrackButton type="button" onClick={() => onAddTrack(track.uri)}>
                                     추가
                                 </AddTrackButton>
                             }

@@ -1,4 +1,3 @@
-// SearchResultList.tsx
 import React from 'react';
 import { Box, Typography } from '@mui/material';
 import { Track } from '../../../models/track';
