@@ -170,11 +170,7 @@ const SearchResultList: React.FC<Props> = ({
             {/* 아티스트 리스트 */}
             {artists.length > 0 && (
                 <Box mb={4} position="relative">
-                    <Typography
-                        mb={1}
-                        variant="h6"
-                        fontWeight="bold"
-                    >
+                    <Typography mb={1} variant="h6" fontWeight="bold">
                         아티스트
                     </Typography>
 
@@ -203,8 +199,16 @@ const SearchResultList: React.FC<Props> = ({
                     >
                         {artists.map(artist => (
                             <Box key={artist.id} sx={{ flex: '0 0 auto', textAlign: 'center' }}>
-                                <Avatar src={artist.images?.[0]?.url} sx={{ width: 120, height: 120, mx: 'auto' }} />
-                                <Typography mt={1} noWrap>{artist.name}</Typography>
+                                <Avatar
+                                    src={artist.images?.[0]?.url}
+                                    sx={{ width: 120, height: 120, mx: 'auto' }}
+                                />
+                                <Typography
+                                    noWrap
+                                    sx={{ maxWidth: 120, mx: 'auto', mt: 1 }}
+                                >
+                                    {artist.name}
+                                </Typography>
                             </Box>
                         ))}
                     </Box>
