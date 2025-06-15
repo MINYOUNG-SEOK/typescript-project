@@ -114,7 +114,11 @@ const SearchPage: React.FC = () => {
             {/* 최근 검색어 */}
             {recent.length > 0 && (
                 <Section>
-                    <Typography variant="h6" gutterBottom>
+                    <Typography
+                        mb={1}
+                        variant="h6"
+                        fontWeight="bold"
+                    >
                         최근 검색 항목
                     </Typography>
                     <HorizontalScroll>
@@ -134,7 +138,11 @@ const SearchPage: React.FC = () => {
 
             {/* 카테고리 */}
             <Section>
-                <Typography variant="h6" gutterBottom>
+                <Typography
+                    mb={1}
+                    variant="h6"
+                    fontWeight="bold"
+                >
                     카테고리 둘러보기
                 </Typography>
 

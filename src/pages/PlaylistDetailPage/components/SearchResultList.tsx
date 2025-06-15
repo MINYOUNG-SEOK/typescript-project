@@ -76,7 +76,13 @@ const SearchResultList: React.FC<Props> = ({
         <Box>
             {/* 인기 검색 결과 */}
             <Box mb={4}>
-                <Typography variant="h6" gutterBottom>인기 검색 결과</Typography>
+                <Typography
+                    mb={1}
+                    variant="h6"
+                    fontWeight="bold"
+                >
+                    인기 검색 결과
+                </Typography>
                 <Grid container spacing={2}>
                     {topArtist && (
                         <Grid item xs={12} sm={4}>
@@ -164,7 +170,13 @@ const SearchResultList: React.FC<Props> = ({
             {/* 아티스트 리스트 */}
             {artists.length > 0 && (
                 <Box mb={4} position="relative">
-                    <Typography variant="h6" gutterBottom>아티스트</Typography>
+                    <Typography
+                        mb={1}
+                        variant="h6"
+                        fontWeight="bold"
+                    >
+                        아티스트
+                    </Typography>
 
                     {showLeftArtists && (
                         <IconButton
@@ -216,7 +228,13 @@ const SearchResultList: React.FC<Props> = ({
             {/* 앨범 리스트 */}
             {albums.length > 0 && (
                 <Box mb={4} position="relative">
-                    <Typography variant="h6" gutterBottom>앨범</Typography>
+                    <Typography
+                        mb={1}
+                        variant="h6"
+                        fontWeight="bold"
+                    >
+                        앨범
+                    </Typography>
 
                     {showLeftAlbums && (
                         <IconButton
@@ -277,7 +295,13 @@ const SearchResultList: React.FC<Props> = ({
             {/* 곡 리스트 (Load More 버튼) */}
             {tracks.length > 0 && (
                 <Box mb={4}>
-                    <Typography variant="h6" gutterBottom>노래</Typography>
+                    <Typography
+                        mb={1}
+                        variant="h6"
+                        fontWeight="bold"
+                    >
+                        노래
+                    </Typography>
                     {visibleTracks.map((track, index) => (
                         <Box key={track.id ?? index} display="flex" alignItems="center" py={1}>
                             <Avatar variant="square" src={track.album?.images?.[0]?.url}
