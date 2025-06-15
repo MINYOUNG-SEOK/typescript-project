@@ -3,12 +3,13 @@ import {
     Box,
     Typography,
     Avatar,
-    Button,
     IconButton,
     Grid,
+    CircularProgress,
 } from '@mui/material';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
+import { useInView } from 'react-intersection-observer';
 
 import { Track } from '../../../models/track';
 import { Artist } from '../../../models/artist';
@@ -31,9 +32,6 @@ const SearchResultList: React.FC<Props> = ({
     artists,
     albums,
 }) => {
-    const [visibleCount, setVisibleCount] = useState(20);
-    const visibleTracks = tracks.slice(0, visibleCount);
-
     const albumsRef = useRef<HTMLDivElement>(null);
     const artistsRef = useRef<HTMLDivElement>(null);
 
@@ -41,6 +39,19 @@ const SearchResultList: React.FC<Props> = ({
     const [showRightArtists, setShowRightArtists] = useState(false);
     const [showLeftAlbums, setShowLeftAlbums] = useState(false);
     const [showRightAlbums, setShowRightAlbums] = useState(false);
+
+    // infinite scroll for tracks
+    const { ref: loadMoreRef, inView } = useInView({ threshold: 0 });
+    const [visibleCount, setVisibleCount] = useState(20);
+
+    // load more when last item in view
+    useEffect(() => {
+        if (inView && visibleCount < tracks.length) {
+            setVisibleCount(prev => prev + 20);
+        }
+    }, [inView, tracks.length, visibleCount]);
+
+    const visibleTracks = tracks.slice(0, visibleCount);
 
     const updateArrows = (
         ref: HTMLDivElement | null,
@@ -53,14 +64,12 @@ const SearchResultList: React.FC<Props> = ({
         setRight(scrollLeft + clientWidth < scrollWidth - 1);
     };
 
-    // 핸들러
-    const onScrollArtists = () => updateArrows(artistsRef.current, setShowLeftArtists, setShowRightArtists);
-    const onScrollAlbums = () => updateArrows(albumsRef.current, setShowLeftAlbums, setShowRightAlbums);
+    const onScrollArtists = () =>
+        updateArrows(artistsRef.current, setShowLeftArtists, setShowRightArtists);
+    const onScrollAlbums = () =>
+        updateArrows(albumsRef.current, setShowLeftAlbums, setShowRightAlbums);
 
-    const scroll = (
-        ref: HTMLDivElement | null,
-        offset: number
-    ) => {
+    const scroll = (ref: HTMLDivElement | null, offset: number) => {
         if (ref) ref.scrollBy({ left: offset, behavior: 'smooth' });
     };
 
@@ -296,34 +305,41 @@ const SearchResultList: React.FC<Props> = ({
                 </Box>
             )}
 
-            {/* 곡 리스트 (Load More 버튼) */}
+            {/* 곡 리스트 */}
             {tracks.length > 0 && (
                 <Box mb={4}>
-                    <Typography
-                        mb={1}
-                        variant="h6"
-                        fontWeight="bold"
-                    >
+                    <Typography mb={1} variant="h6" fontWeight="bold">
                         노래
                     </Typography>
-                    {visibleTracks.map((track, index) => (
-                        <Box key={track.id ?? index} display="flex" alignItems="center" py={1}>
-                            <Avatar variant="square" src={track.album?.images?.[0]?.url}
-                                sx={{ width: 48, height: 48, mr: 2 }}
-                            />
-                            <Box>
-                                <Typography>{track.name}</Typography>
-                                <Typography variant="body2" color="text.secondary">
-                                    {track.artists?.[0]?.name}
-                                </Typography>
+
+                    {visibleTracks.map((track, index) => {
+                        const isLast = index === visibleTracks.length - 1;
+                        return (
+                            <Box
+                                key={track.id ?? index}
+                                ref={isLast ? loadMoreRef : undefined}
+                                display="flex"
+                                alignItems="center"
+                                py={1}
+                            >
+                                <Avatar
+                                    variant="square"
+                                    src={track.album?.images?.[0]?.url}
+                                    sx={{ width: 48, height: 48, mr: 2 }}
+                                />
+                                <Box>
+                                    <Typography noWrap>{track.name}</Typography>
+                                    <Typography variant="body2" color="text.secondary" noWrap>
+                                        {track.artists?.[0]?.name}
+                                    </Typography>
+                                </Box>
                             </Box>
-                        </Box>
-                    ))}
-                    {visibleCount < tracks.length && (
-                        <Box textAlign="center" mt={2}>
-                            <Button variant="outlined" onClick={() => setVisibleCount(prev => prev + 20)}>
-                                더 보기
-                            </Button>
+                        );
+                    })}
+
+                    {inView && visibleCount < tracks.length && (
+                        <Box textAlign="center" py={2}>
+                            <CircularProgress size={24} sx={{ color: "#d9d9d9" }} />
                         </Box>
                     )}
                 </Box>
