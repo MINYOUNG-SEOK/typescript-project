@@ -1,31 +1,33 @@
 import { useInfiniteQuery } from "@tanstack/react-query"
 import { searchItemsByKeyword } from "../apis/searchApi"
-import { SearchRequestParams } from "models/search"
+import { SearchRequestParams, SearchResponse } from "models/search"
 import useClientCredentialToken from "./useClientCredentialToken"
 
 const useSearchItemsByKeyword = (params: SearchRequestParams) => {
-    const ClientCredentialToken = useClientCredentialToken()
+    const token = useClientCredentialToken()
 
-    return useInfiniteQuery({
+    return useInfiniteQuery<
+        SearchResponse,                       // 1) queryFn 페이지 반환 타입
+        Error,                                // 2) 에러 타입
+        SearchResponse,                       // 3) select 후 최종 데이터 타입
+        ["search", SearchRequestParams],      // 4) queryKey 튜플 타입
+        number                                // 5) pageParam 의 타입 (여기에 number 명시!)
+    >({
         queryKey: ["search", params],
-        queryFn: ({ pageParam = 0 }) => {
-            if (!ClientCredentialToken) throw new Error("no token available")
-            return searchItemsByKeyword(ClientCredentialToken, { ...params, offset: pageParam })
+        queryFn: async ({ pageParam = 0 }) => {
+            if (!token) throw new Error("no token available")
+            return searchItemsByKeyword(token, {
+                ...params,
+                offset: pageParam,
+            })
+        },
+        getNextPageParam: lastPage => {
+            const nextUrl = lastPage.tracks?.next
+            if (!nextUrl) return undefined
+            const off = new URL(nextUrl).searchParams.get("offset")
+            return off ? parseInt(off, 10) : undefined
         },
         initialPageParam: 0,
-        getNextPageParam: (lastPage) => {
-            const nextPageUrl =
-                lastPage.tracks?.next ||
-                lastPage.artists?.next ||
-                lastPage.albums?.next ||
-                lastPage.audiobook?.next;
-
-            if (nextPageUrl) {
-                const nextOffset = new URL(nextPageUrl).searchParams.get("offset")
-                return nextOffset ? parseInt(nextOffset) : undefined
-            }
-            return undefined;
-        },
         enabled: params.q.trim().length > 0,
         refetchOnWindowFocus: false,
         refetchOnMount: false,
@@ -34,4 +36,4 @@ const useSearchItemsByKeyword = (params: SearchRequestParams) => {
     })
 }
 
-export default useSearchItemsByKeyword;
+export default useSearchItemsByKeyword

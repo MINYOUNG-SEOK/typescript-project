@@ -9,6 +9,7 @@ import {
     CardContent,
     styled,
 } from '@mui/material'
+import CloseIcon from '@mui/icons-material/Close'
 import { useNavigate } from 'react-router-dom'
 import useGetCategories from '../../hooks/useGetCategories'
 import { Category } from '../../models/browse'
@@ -27,6 +28,17 @@ const HorizontalScroll = styled(Box)({
     gap: 12,
 })
 
+const RecentChip = styled(Chip)(({ theme }) => ({
+    height: 40,
+    padding: theme.spacing(1, 1),
+    fontSize: '0.9rem',
+    borderRadius: 20,
+    '& .MuiChip-deleteIcon': {
+        color: '#000',
+        fontSize: 20,
+    },
+}));
+
 // 카테고리 그리드: 반응형으로 열 수 조정
 const CategoryGrid = styled(Box)(({ theme }) => ({
     display: 'grid',
@@ -39,7 +51,7 @@ const CategoryGrid = styled(Box)(({ theme }) => ({
         gridTemplateColumns: 'repeat(4, 1fr)',
     },
     [theme.breakpoints.up('lg')]: {
-        gridTemplateColumns: 'repeat(6, 1fr)',
+        gridTemplateColumns: 'repeat(5, 1fr)',
     },
 }))
 
@@ -68,6 +80,15 @@ const SearchPage: React.FC = () => {
         })
     }
 
+    // 최근 검색어 삭제 함수
+    const handleDelete = (q: string) => {
+        setRecent(prev => {
+            const next = prev.filter(x => x !== q)
+            localStorage.setItem('recentSearches', JSON.stringify(next))
+            return next
+        })
+    }
+
     // Enter 키로 검색
     const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
         if (e.key === 'Enter') doSearch(input)
@@ -89,9 +110,16 @@ const SearchPage: React.FC = () => {
                     <Typography variant="subtitle1" gutterBottom>
                         최근 검색
                     </Typography>
-                    <HorizontalScroll>
+                    <HorizontalScroll sx={{ py: 1 }}>
                         {recent.map(q => (
-                            <Chip key={q} label={q} onClick={() => doSearch(q)} />
+                            <RecentChip
+                                key={q}
+                                label={q}
+                                onClick={() => doSearch(q)}
+                                onDelete={() => handleDelete(q)}
+                                deleteIcon={<CloseIcon />}
+                                clickable
+                            />
                         ))}
                     </HorizontalScroll>
                 </Section>
