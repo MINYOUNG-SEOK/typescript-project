@@ -77,3 +77,11 @@ export interface AddTracksToPlaylistRequest {
     uris: string[];
     position?: number;
 }
+
+export interface RemoveTracksFromPlaylistRequest {
+    playlist_id: string
+    tracks: Array<{
+        uri: string
+        positions: number[]
+    }>
+}

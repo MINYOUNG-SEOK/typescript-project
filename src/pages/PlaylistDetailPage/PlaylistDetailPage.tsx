@@ -23,6 +23,7 @@ import {
     DialogActions,
 } from "@mui/material";
 import CloseIcon from '@mui/icons-material/Close'
+import DeleteIcon from '@mui/icons-material/Delete';
 import AddIcon from '@mui/icons-material/Add'
 import PlayArrowIcon from "@mui/icons-material/PlayArrow";
 import ShuffleIcon from "@mui/icons-material/Shuffle";
@@ -37,6 +38,9 @@ import ImageWithFallback from "../../common/components/ImageWithFallbackProps";
 import EmptyPlaylistWithSearch from "./components/EmptyPlaylistWithSearch";
 import useAddTracksToPlaylist from "../../hooks/useAddTracksToPlaylist";
 import { ConfirmAddDialog } from "../../common/components/ConfirmAddDialog";
+import useRemoveTracksFromPlaylist from "../../hooks/useRemoveTracksFromPlaylist"
+import { ConfirmDeleteDialog } from "../../common/components/ConfirmDeleteDialog"
+
 
 const formatMs = (ms: number) => {
     const total = Math.floor(ms / 1000);
@@ -99,6 +103,7 @@ const BodyRow = styled(TableRow)({
     cursor: "pointer",
     "&:hover": { background: "#f2f2f2" },
     "&:hover .favBtn": { opacity: 1 },
+    "&:hover .deleteBtn": { opacity: 1 },
 });
 
 const containerProps = {
@@ -130,11 +135,19 @@ const PlaylistDetailPage: React.FC = () => {
     const [confirmOpen, setConfirmOpen] = useState(false);
     const [pendingUri, setPendingUri] = useState<string>("");
 
+    // 삭제 확인용 다이얼로그 상태
+    const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
+    const [pendingDeleteId, setPendingDeleteId] = useState<string | null>(null);
+
+
+
     // 플레이리스트 아이템 조회
     const { data: playlistItemsData } = useGetPlaylistItems({ playlist_id: id! });
 
     // 추가 뮤테이션 훅
     const addTracksMutation = useAddTracksToPlaylist();
+
+    const removeTracksMutation = useRemoveTracksFromPlaylist();
 
     const handleAddTrack = (trackUri: string) => {
         if (!id) return;
@@ -171,6 +184,13 @@ const PlaylistDetailPage: React.FC = () => {
             handleClose();
         }
     }, [addTracksMutation.isSuccess]);
+
+    // 삭제 
+    const handleDeleteTrack = (trackId: string) => {
+        setPendingDeleteId(trackId)
+        setDeleteConfirmOpen(true)
+    }
+
 
 
     if (!accessToken) {
@@ -488,6 +508,20 @@ const PlaylistDetailPage: React.FC = () => {
 
                                                     </Stack>
                                                 </TableCell>
+
+                                                <TableCell align="right" sx={{ px: 0, width: 48 }}>
+                                                    <IconButton
+                                                        className="deleteBtn"
+                                                        onClick={() => {
+                                                            setPendingDeleteId(track.id);
+                                                            setDeleteConfirmOpen(true);
+                                                        }}
+                                                        sx={{ opacity: 0, transition: "opacity 0.2s" }}
+                                                        aria-label="트랙 삭제"
+                                                    >
+                                                        <DeleteIcon fontSize="small" />
+                                                    </IconButton>
+                                                </TableCell>
                                             </BodyRow>
                                         );
                                     })
@@ -557,6 +591,20 @@ const PlaylistDetailPage: React.FC = () => {
                             playlist_id: id,
                             uris: [pendingUri],
                             position: 0,
+                        });
+                    }
+                }}
+            />
+
+            {/* 삭제 확인 다이얼로그 */}
+            <ConfirmDeleteDialog
+                open={deleteConfirmOpen}
+                onClose={() => setDeleteConfirmOpen(false)}
+                onConfirm={() => {
+                    if (id && pendingDeleteId) {
+                        removeTracksMutation.mutate({
+                            playlist_id: id,
+                            uris: [`spotify:track:${pendingDeleteId}`],
                         });
                     }
                 }}

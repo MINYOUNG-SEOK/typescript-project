@@ -1,4 +1,4 @@
-import { AddTracksToPlaylistRequest, CreatePlaylistRequest, GetCurrentUserPlaylistRequest, GetCurrentUserPlaylistsResponse, GetPlaylistItemsRequest, GetPlaylistItemsResponse, GetPlaylistRequest, Playlist, PlaylistTrack } from "models/playlist"
+import { AddTracksToPlaylistRequest, CreatePlaylistRequest, GetCurrentUserPlaylistRequest, GetCurrentUserPlaylistsResponse, GetPlaylistItemsRequest, GetPlaylistItemsResponse, GetPlaylistRequest, Playlist, PlaylistTrack, RemoveTracksFromPlaylistRequest } from "models/playlist"
 import api from "../utils/api"
 import axios from "axios";
 
@@ -61,5 +61,21 @@ export const addTracksToPlaylist = async ({
         await api.post(`/playlists/${playlist_id}/tracks`, { uris, position });
     } catch (error) {
         throw new Error("fail to add tracks to playlist");
+    }
+};
+
+export const removeTracksFromPlaylist = async (
+    params: RemoveTracksFromPlaylistRequest
+): Promise<void> => {
+    try {
+        await api.request({
+            method: 'DELETE',
+            url: `/playlists/${params.playlist_id}/tracks`,
+            data: {
+                tracks: params.tracks
+            }
+        });
+    } catch (error) {
+        throw new Error('fail to remove tracks from playlist');
     }
 };
