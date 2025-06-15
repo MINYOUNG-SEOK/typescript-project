@@ -207,11 +207,11 @@ const FavoritesPage: React.FC = () => {
                                             <Box sx={{ position: "relative", display: "inline-block" }}>
                                                 <ImageWithFallback
                                                     src={track.album?.images?.[2]?.url}
-                                                    fallbackSrc="https://placehold.co/40x40?text=No+Image"
+                                                    fallbackSrc="https://placehold.co/50x50?text=No+Image"
                                                     width={50}
                                                     height={50}
                                                     alt={track.name}
-                                                    style={{ borderRadius: 4, objectFit: "cover" }}
+                                                    style={{ display: 'block', borderRadius: 4, objectFit: "cover" }}
                                                 />
                                                 <Box
                                                     sx={{

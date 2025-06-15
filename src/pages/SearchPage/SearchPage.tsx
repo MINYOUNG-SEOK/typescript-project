@@ -1,9 +1,6 @@
 import React, { useState, KeyboardEvent, useEffect } from 'react'
 import {
     Box,
-    TextField,
-    InputAdornment,
-    IconButton,
     Typography,
     Chip,
     Card,
@@ -12,12 +9,12 @@ import {
     CardContent,
     styled,
 } from '@mui/material'
-import SearchIcon from '@mui/icons-material/Search'
 import { useNavigate } from 'react-router-dom'
 import useGetCategories from '../../hooks/useGetCategories'
 import { Category } from '../../models/browse'
+import { SearchInput } from '../../common/components/SearchInput'
 
-// 검색 페이지 각 섹션 간 간격을 주기 위한 styled
+// 검색 페이지 각 섹션 간 간격
 const Section = styled('section')(({ theme }) => ({
     marginTop: theme.spacing(4),
 }))
@@ -29,7 +26,6 @@ const HorizontalScroll = styled(Box)({
     paddingBottom: 8,
     gap: 12,
 })
-
 
 // 카테고리 그리드: 반응형으로 열 수 조정
 const CategoryGrid = styled(Box)(({ theme }) => ({
@@ -65,38 +61,26 @@ const SearchPage: React.FC = () => {
         if (!keyword) return
         navigate(`/search/${encodeURIComponent(keyword)}`)
 
-        // 로컬스토리지에 중복 없이 최대 5개까지 저장
         setRecent(prev => {
-            const next = [keyword, ...prev.filter(x => x !== keyword)].slice(0, 5)
+            const next = [keyword, ...prev.filter(x => x !== keyword)].slice(0, 10)
             localStorage.setItem('recentSearches', JSON.stringify(next))
             return next
         })
     }
 
     // Enter 키로 검색
-    const onKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
+    const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
         if (e.key === 'Enter') doSearch(input)
     }
 
     return (
         <Box p={2} maxWidth={1400} mx="auto">
-            {/* 1) 검색 입력 */}
-            <TextField
-                fullWidth
-                placeholder="곡, 아티스트, 앨범명을 입력 후 Enter"
+            {/* 1) 공통 SearchInput 사용 */}
+            <SearchInput
                 value={input}
-                onChange={e => setInput(e.target.value)}
-                onKeyDown={onKeyDown}
-                variant="outlined"
-                InputProps={{
-                    endAdornment: (
-                        <InputAdornment position="end">
-                            <IconButton onClick={() => doSearch(input)} edge="end">
-                                <SearchIcon />
-                            </IconButton>
-                        </InputAdornment>
-                    ),
-                }}
+                onChange={setInput}
+                onSubmit={() => doSearch(input)}
+                placeholder="곡, 아티스트, 앨범명을 입력한 후 Enter 키를 눌러 검색해보세요"
             />
 
             {/* 2) 최근 검색어 섹션 */}
@@ -132,18 +116,14 @@ const SearchPage: React.FC = () => {
                                     aspectRatio: '16/9',
                                     cursor: 'pointer',
                                 }}
-                                onClick={() => navigate(`/search/${encodeURIComponent(cat.id)}`)}
+                                onClick={() => navigate(`/category/${encodeURIComponent(cat.id)}`)}
                             >
                                 <CardActionArea sx={{ height: '100%' }}>
                                     <CardMedia
                                         component="img"
                                         image={cat.icons?.[0]?.url}
                                         alt={cat.name}
-                                        sx={{
-                                            width: '100%',
-                                            height: '100%',
-                                            objectFit: 'cover',
-                                        }}
+                                        sx={{ width: '100%', height: '100%', objectFit: 'cover' }}
                                     />
                                     <CardContent
                                         sx={{

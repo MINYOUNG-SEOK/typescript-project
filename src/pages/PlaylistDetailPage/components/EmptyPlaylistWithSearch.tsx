@@ -1,20 +1,6 @@
 import React, { useState, KeyboardEvent, useEffect } from 'react'
-import {
-    Box,
-    TextField,
-    InputAdornment,
-    IconButton,
-    Typography,
-    CircularProgress,
-    List,
-    ListItem,
-    ListItemAvatar,
-    Avatar,
-    ListItemText,
-    Button,
-    styled,
-} from '@mui/material'
-import SearchIcon from '@mui/icons-material/Search'
+import { Avatar, Box, CircularProgress, List, ListItem, ListItemAvatar, ListItemText, Typography, styled } from '@mui/material'
+import { SearchInput } from '../../../common/components/SearchInput'
 import CloseIcon from '@mui/icons-material/Close'
 import { useInView } from 'react-intersection-observer'
 import useSearchItemsByKeyword from '../../../hooks/useSearchItemsByKeyword'
@@ -24,7 +10,6 @@ interface EmptyPlaylistWithSearchProps {
     onClose?: () => void
     onAddTrack: (trackUri: string) => void
 }
-
 
 const AddTrackButton = styled('button')(({ theme }) => ({
     display: 'inline-flex',
@@ -64,36 +49,19 @@ const EmptyPlaylistWithSearch: React.FC<EmptyPlaylistWithSearchProps> = ({ onClo
         if (inView && hasNextPage) fetchNextPage()
     }, [inView, hasNextPage, fetchNextPage])
 
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => setInputValue(e.target.value)
-    const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
-        if (e.key === 'Enter') setKeyword(inputValue.trim())
-    }
-    const handleSearchClick = () => setKeyword(inputValue.trim())
+    const handleSearch = () => setKeyword(inputValue.trim())
 
     return (
         <Box sx={{ width: '100%', bgcolor: '#ffffff', position: 'relative', minHeight: 500 }}>
 
 
-            <Box sx={{ maxWidth: 600, mx: 'auto', mb: 2 }}>
-                <TextField
-                    fullWidth
-                    placeholder="곡, 아티스트, 앨범명을 입력한 후 Enter 키를 눌러 검색해보세요"
-                    value={inputValue}
-                    onChange={handleChange}
-                    onKeyDown={handleKeyDown}
-                    variant="outlined"
-                    InputProps={{
-                        endAdornment: (
-                            <InputAdornment position="end">
-                                <IconButton onClick={handleSearchClick} edge="end" aria-label="검색">
-                                    <SearchIcon />
-                                </IconButton>
-                            </InputAdornment>
-                        ),
-                        sx: { borderRadius: 2 },
-                    }}
-                />
-            </Box>
+            {/* 공통 SearchInput */}
+            <SearchInput
+                value={inputValue}
+                onChange={setInputValue}
+                onSubmit={handleSearch}
+                placeholder="곡, 아티스트, 앨범명을 입력한 후 Enter 키를 눌러 검색해보세요"
+            />
 
             {isLoading && (
                 <Box sx={{ textAlign: 'center', py: 3 }}>
