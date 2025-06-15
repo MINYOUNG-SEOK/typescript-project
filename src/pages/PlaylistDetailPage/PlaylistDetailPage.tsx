@@ -20,6 +20,7 @@ import {
     DialogTitle,
     DialogContent,
     keyframes,
+    DialogActions,
 } from "@mui/material";
 import CloseIcon from '@mui/icons-material/Close'
 import AddIcon from '@mui/icons-material/Add'
@@ -35,6 +36,7 @@ import { useInView } from "react-intersection-observer";
 import ImageWithFallback from "../../common/components/ImageWithFallbackProps";
 import EmptyPlaylistWithSearch from "./components/EmptyPlaylistWithSearch";
 import useAddTracksToPlaylist from "../../hooks/useAddTracksToPlaylist";
+import { ConfirmAddDialog } from "../../common/components/ConfirmAddDialog";
 
 const formatMs = (ms: number) => {
     const total = Math.floor(ms / 1000);
@@ -86,8 +88,6 @@ const pulse = keyframes`
   100% { box-shadow: 0 0 0 0 rgba(29,185,84,0); }
 `
 
-
-
 const HeaderTableCell = styled(TableCell)({
     color: "#6e6e73",
     fontWeight: 700,
@@ -126,20 +126,47 @@ const PlaylistDetailPage: React.FC = () => {
     const handleOpen = () => setOpenSearch(true);
     const handleClose = () => setOpenSearch(false);
 
+    // 중복 확인용 다이얼로그 상태
+    const [confirmOpen, setConfirmOpen] = useState(false);
+    const [pendingUri, setPendingUri] = useState<string>("");
+
+    // 플레이리스트 아이템 조회
+    const { data: playlistItemsData } = useGetPlaylistItems({ playlist_id: id! });
+
     // 추가 뮤테이션 훅
     const addTracksMutation = useAddTracksToPlaylist();
 
     const handleAddTrack = (trackUri: string) => {
         if (!id) return;
-        addTracksMutation.mutate({ playlist_id: id, uris: [trackUri], position: 0 });
+        // URI에서 ID만 뽑아내기
+        const trackId = trackUri.split(":").pop()!;
+        // 현재 로드된 모든 트랙 ID 배열
+        const existingIds =
+            playlistItemsData?.pages.flatMap(page =>
+                page.items.map(item => item.track.id)
+            ) || [];
+
+        if (existingIds.includes(trackId)) {
+            // 중복이면 다이얼로그 열기
+            setPendingUri(trackUri);
+            setConfirmOpen(true);
+        } else {
+            // 중복 아니면 바로 추가
+            addTracksMutation.mutate({
+                playlist_id: id,
+                uris: [trackUri],
+                position: 0,
+            });
+        }
     };
 
+    // 추가 성공 시 모달 닫기
     useEffect(() => {
         if (addTracksMutation.isSuccess) {
+            setConfirmOpen(false);
             handleClose();
         }
     }, [addTracksMutation.isSuccess]);
-
 
 
     if (!accessToken) {
@@ -340,7 +367,7 @@ const PlaylistDetailPage: React.FC = () => {
                                         const isFav = favorites.some((t: any) => t.id === track.id);
                                         return (
                                             <BodyRow
-                                                key={`${pageIndex}-${track.id}`}
+                                                key={`${pageIndex}-${i}-${track.id}`}
                                                 sx={{
                                                     backgroundColor: index % 2 === 0 ? "#FAFAFA" : "transparent",
                                                     "&:hover .overlay": { opacity: 1 },
@@ -514,6 +541,24 @@ const PlaylistDetailPage: React.FC = () => {
                     />
                 </DialogContent>
             </Dialog>
+
+
+            {/* 중복 확인 다이얼로그 */}
+            <ConfirmAddDialog
+                open={confirmOpen}
+                onClose={() => setConfirmOpen(false)}
+                onConfirm={() => {
+                    if (id && pendingUri) {
+                        addTracksMutation.mutate({
+                            playlist_id: id,
+                            uris: [pendingUri],
+                            position: 0,
+                        });
+                    }
+                }}
+            />
+
+
         </Box>
     );
 };
