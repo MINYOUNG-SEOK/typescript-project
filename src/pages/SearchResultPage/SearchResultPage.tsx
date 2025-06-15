@@ -1,111 +1,70 @@
-import React, { useEffect } from 'react'
-import { useParams } from 'react-router-dom'
-import {
-    Box,
-    CircularProgress,
-    Typography,
-    List,
-    ListItem,
-    ListItemAvatar,
-    Avatar,
-    ListItemText,
-    Alert,
-} from '@mui/material'
-import { useInView } from 'react-intersection-observer'
-import useSearchItemsByKeyword from '../../hooks/useSearchItemsByKeyword'
-import { SEARCH_TYPE, SearchResponse } from '../../models/search'
-import { InfiniteData } from '@tanstack/react-query'
-import { Track } from '../../models/track'
-
+import React, { useEffect } from 'react';
+import { useParams } from 'react-router-dom';
+import { Box, CircularProgress, Alert } from '@mui/material';
+import { useInView } from 'react-intersection-observer';
+import useSearchItemsByKeyword from '../../hooks/useSearchItemsByKeyword';
+import { SEARCH_TYPE } from '../../models/search';
+import SearchResultList from '../PlaylistDetailPage/components/SearchResultList';
 
 export default function SearchResultPage() {
-    const { keyword = '' } = useParams<{ keyword: string }>()
-    const q = decodeURIComponent(keyword)
+  const { keyword = '' } = useParams<{ keyword: string }>();
+  const q = decodeURIComponent(keyword);
 
-    const {
-        data,
-        isLoading,
-        isError,
-        error,
-        fetchNextPage,
-        hasNextPage,
-        isFetchingNextPage,
-    } = useSearchItemsByKeyword({ q, type: [SEARCH_TYPE.Track] }) as {
-        data: InfiniteData<SearchResponse> | undefined,
-        isLoading: boolean,
-        isError: boolean,
-        error: unknown,
-        fetchNextPage: () => void,
-        hasNextPage: boolean | undefined,
-        isFetchingNextPage: boolean,
+  const {
+    data,
+    isLoading,
+    isError,
+    error,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+  } = useSearchItemsByKeyword({ q, type: [SEARCH_TYPE.Track, SEARCH_TYPE.Artist, SEARCH_TYPE.Album] });
+
+  const tracks = data?.pages.flatMap(p => p.tracks?.items ?? []) ?? [];
+  const artists = data?.pages.flatMap(p => p.artists?.items ?? []) ?? [];
+  const albums = data?.pages.flatMap(p => p.albums?.items ?? []) ?? [];
+
+  const topArtist = artists[0];
+  const topTrack = tracks[0];
+  const topAlbum = albums[0];
+
+  const { ref, inView } = useInView();
+  useEffect(() => {
+    if (inView && hasNextPage && !isFetchingNextPage) {
+      fetchNextPage();
     }
+  }, [inView, hasNextPage, isFetchingNextPage, fetchNextPage]);
 
-    const items: Track[] = data?.pages.flatMap(p => p.tracks?.items ?? []) ?? [];
-
-    // 무한 스크롤
-    const { ref, inView } = useInView()
-    useEffect(() => {
-        if (inView && hasNextPage && !isFetchingNextPage) {
-            fetchNextPage()
-        }
-    }, [inView, hasNextPage, isFetchingNextPage, fetchNextPage])
-
-    if (isLoading) {
-        return (
-            <Box textAlign="center" py={4}>
-                <CircularProgress sx={{ color: '#d9d9d9' }} />
-            </Box>
-        )
-    }
-
-    if (isError) {
-        return (
-            <Box textAlign="center" py={4}>
-                <Alert severity="error">
-                    검색 중 오류가 발생했습니다: {(error as Error).message}
-                </Alert>
-            </Box>
-        )
-    }
-
+  if (isLoading) {
     return (
-        <Box p={2} maxWidth={1400} mx="auto">
-            {items.length === 0 ? (
-                <Typography align="center" color="text.secondary" py={4}>
-                    “{q}” 에 맞는 검색 결과가 없습니다.
-                </Typography>
-            ) : (
-                <>
-                    <Typography variant="h6" gutterBottom>
-                        “{q}” 검색 결과
-                    </Typography>
-                    <List disablePadding>
-                        {items.map((track, index) => (
-                            <ListItem key={track.id ?? track.name ?? index} divider>
-                                <ListItemAvatar>
-                                    <Avatar
-                                        variant="rounded"
-                                        src={track.album?.images?.[2]?.url}
-                                        alt={track.name ?? ''}
-                                        sx={{ width: 48, height: 48, mr: 2 }}
-                                    />
-                                </ListItemAvatar>
-                                <ListItemText
-                                    primary={track.name ?? 'Unknown'}
-                                    secondary={track.artists?.map(a => a.name).join(', ') ?? ''}
-                                />
-                            </ListItem>
-                        ))}
-                        {hasNextPage && (
-                            <div ref={ref} style={{ textAlign: 'center', padding: 16 }}>
-                                {isFetchingNextPage && (
-                                    <CircularProgress size={20} sx={{ color: '#d9d9d9' }} />
-                                )}
-                            </div>
-                        )}
-                    </List>
-                </>
-            )}
-        </Box>
-    )
+      <Box textAlign="center" py={4}>
+        <CircularProgress sx={{ color: '#d9d9d9' }} />
+      </Box>
+    );
+  }
+
+  if (isError) {
+    return (
+      <Box textAlign="center" py={4}>
+        <Alert severity="error">
+          검색 중 오류가 발생했습니다: {(error as Error).message}
+        </Alert>
+      </Box>
+    );
+  }
+
+  return (
+    <Box p={2} maxWidth={1400} mx="auto">
+      <SearchResultList
+        topArtist={topArtist}
+        topTrack={topTrack}
+        topAlbum={topAlbum}
+        tracks={tracks}
+        artists={artists}
+        albums={albums}
+      />
+      {/* 무한스크롤용 ref: Songs LoadMore 하단에 걸려있음 */}
+      <Box ref={ref} />
+    </Box>
+  );
 }
