@@ -84,7 +84,7 @@ const SearchResultList: React.FC<Props> = ({
     return (
         <Box>
             {/* 인기 검색 결과 */}
-            <Box mb={4}>
+            <Box mb={8}>
                 <Typography
                     mb={1}
                     variant="h6"
@@ -178,14 +178,14 @@ const SearchResultList: React.FC<Props> = ({
 
             {/* 아티스트 리스트 */}
             {artists.length > 0 && (
-                <Box mb={4} position="relative">
+                <Box mb={6} position="relative">
                     <Typography mb={1} variant="h6" fontWeight="bold">
                         아티스트
                     </Typography>
 
                     {showLeftArtists && (
                         <IconButton
-                            onClick={() => scroll(artistsRef.current, -120)}
+                            onClick={() => scroll(artistsRef.current, -240)}
                             sx={{
                                 position: 'absolute', top: '50%', left: 0,
                                 transform: 'translateY(-50%)', zIndex: 1,
@@ -224,7 +224,7 @@ const SearchResultList: React.FC<Props> = ({
 
                     {showRightArtists && (
                         <IconButton
-                            onClick={() => scroll(artistsRef.current, 120)}
+                            onClick={() => scroll(artistsRef.current, 240)}
                             sx={{
                                 position: 'absolute', top: '50%', right: 0,
                                 transform: 'translateY(-50%)', zIndex: 1,
@@ -240,7 +240,7 @@ const SearchResultList: React.FC<Props> = ({
 
             {/* 앨범 리스트 */}
             {albums.length > 0 && (
-                <Box mb={4} position="relative">
+                <Box mb={6} position="relative">
                     <Typography
                         mb={1}
                         variant="h6"
@@ -251,7 +251,7 @@ const SearchResultList: React.FC<Props> = ({
 
                     {showLeftAlbums && (
                         <IconButton
-                            onClick={() => scroll(albumsRef.current, -200)}
+                            onClick={() => scroll(albumsRef.current, -240)}
                             sx={{
                                 position: 'absolute', top: '50%', left: 0,
                                 transform: 'translateY(-50%)', zIndex: 1,
@@ -277,7 +277,7 @@ const SearchResultList: React.FC<Props> = ({
                                 <Avatar
                                     variant="square"
                                     src={album.images?.[0]?.url}
-                                    sx={{ width: 200, height: 200, borderRadius: 2, mx: 'auto' }}
+                                    sx={{ width: 120, height: 120, borderRadius: 2, mx: 'auto' }}
                                 />
                                 <Typography noWrap sx={{ maxWidth: 200, mx: 'auto', mt: 1 }}>
                                     {album.name}
@@ -291,7 +291,7 @@ const SearchResultList: React.FC<Props> = ({
 
                     {showRightAlbums && (
                         <IconButton
-                            onClick={() => scroll(albumsRef.current, 200)}
+                            onClick={() => scroll(albumsRef.current, 240)}
                             sx={{
                                 position: 'absolute', top: '50%', right: 0,
                                 transform: 'translateY(-50%)', zIndex: 1,
