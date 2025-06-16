@@ -16,7 +16,7 @@ const useSearchItemsByKeyword = (params: SearchRequestParams) => {
     queryKey: ["search", params],
 
     queryFn: async ({ pageParam = 0 }) => {
-      if (!token) throw new Error("no token available");
+      // if (!token) throw new Error("no token available");
       return searchItemsByKeyword(token, {
         ...params,
         offset: pageParam,

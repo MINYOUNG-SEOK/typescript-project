@@ -6,6 +6,7 @@ import {
     Card,
     CardActionArea,
     CardContent,
+    CardMedia,
     styled,
     useTheme,
 } from '@mui/material'
@@ -53,10 +54,11 @@ const CategoryGrid = styled(Box)(({ theme }) => ({
 // 랜덤 컬러 함수
 const getRandomColor = () => {
     const h = Math.floor(Math.random() * 360)
-    const s = 40 + Math.random() * 20
-    const l = 70 + Math.random() * 10
+    const s = 40 + Math.random() * 60
+    const l = 30 + Math.random() * 55
     return `hsl(${h}, ${s}%, ${l}%)`
 }
+
 
 const SearchPage: React.FC = () => {
     const theme = useTheme()
@@ -64,6 +66,7 @@ const SearchPage: React.FC = () => {
     const [recent, setRecent] = useState<string[]>([])
     const navigate = useNavigate()
     const { data: categories, isLoading: catLoading } = useGetCategories()
+
 
     // 카테고리별 랜덤 컬러 부여
     const colored = useMemo(
@@ -157,15 +160,34 @@ const SearchPage: React.FC = () => {
                                     position: 'relative',
                                     borderRadius: 2,
                                     aspectRatio: '16/9',
-                                    backgroundColor: cat.color,
-                                    cursor: 'pointer',
+                                    backgroundColor: !cat.imageUrl ? cat.color : undefined,
+                                    color: '#fff',         // 텍스트는 흰색
                                 }}
-                                onClick={() =>
-                                    navigate(`/category/${encodeURIComponent(cat.id)}`)
-                                }
                             >
-                                <CardActionArea sx={{ height: '100%' }}>
-                                    {/* 이미지 제거 → 텍스트만 출력 */}
+                                <CardActionArea
+                                    sx={{ height: '100%' }}
+                                    onClick={() =>
+                                        navigate(`/category/${encodeURIComponent(cat.id)}`)
+                                    }
+                                >
+                                    {/* 3) 이미지가 있을 때만 렌더 */}
+                                    {cat.imageUrl && (
+                                        <CardMedia
+                                            component="img"
+                                            image={cat.imageUrl}
+                                            alt={cat.name}
+                                            sx={{
+                                                height: '100%',
+                                                width: '100%',
+                                                objectFit: 'cover',  // 비율 유지하며 꽉 채우기
+                                                position: 'absolute',
+                                                top: 0,
+                                                left: 0,
+                                            }}
+                                        />
+                                    )}
+
+                                    {/* 4) 텍스트는 항상 최상단에 */}
                                     <CardContent
                                         sx={{
                                             position: 'absolute',
@@ -177,7 +199,7 @@ const SearchPage: React.FC = () => {
                                     >
                                         <Typography
                                             variant="h6"
-                                            sx={{ color: '#fff', fontWeight: 700 }}
+                                            sx={{ fontWeight: 700 }}
                                         >
                                             {cat.name}
                                         </Typography>
