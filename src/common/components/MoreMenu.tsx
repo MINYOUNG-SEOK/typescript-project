@@ -61,16 +61,6 @@ export default function MoreMenu({ anchorEl, onClose, isLogin }) {
                 </MenuItem>
 
                 <MenuItem sx={{ display: 'flex', justifyContent: 'space-between' }}>
-                    <ListItemText>스테이션 생성</ListItemText>
-                    <RadioIcon fontSize="small" />
-                </MenuItem>
-
-                <MenuItem sx={{ display: 'flex', justifyContent: 'space-between' }}>
-                    <ListItemText>크레딧 보기</ListItemText>
-                    <InfoOutlinedIcon fontSize="small" />
-                </MenuItem>
-
-                <MenuItem sx={{ display: 'flex', justifyContent: 'space-between' }}>
                     <ListItemText>공유</ListItemText>
                     <ShareIcon fontSize="small" />
                 </MenuItem>
