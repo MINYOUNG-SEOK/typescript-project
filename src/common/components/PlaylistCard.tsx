@@ -11,6 +11,7 @@ interface PlaylistCardProps {
 export default function PlaylistCard({ playlist }: PlaylistCardProps) {
     return (
         <Box
+            className="card-root" // ✅ 공통 hover selector 연결
             width={180}
             flexShrink={0}
             display="flex"
@@ -18,10 +19,11 @@ export default function PlaylistCard({ playlist }: PlaylistCardProps) {
             alignItems="flex-start"
             sx={{
                 position: 'relative',
+                cursor: 'pointer',
                 '&:hover .overlay-btn': {
                     opacity: 1,
+                    transform: 'translate(0%, 0%)',
                 },
-                cursor: 'pointer',
             }}
         >
             {/* 이미지 + Play 버튼 */}
@@ -53,7 +55,8 @@ export default function PlaylistCard({ playlist }: PlaylistCardProps) {
                         bottom: 8,
                         left: 8,
                         opacity: 0,
-                        transition: 'opacity 0.2s ease-in-out',
+                        transform: 'translate(-20%, 20%)',
+                        transition: 'opacity 0.3s ease, transform 0.3s ease',
                     }}
                 >
                     <PlayButton hover />

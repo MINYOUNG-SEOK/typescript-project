@@ -11,6 +11,7 @@ interface EpisodeCardProps {
 export default function EpisodeCard({ episode }: EpisodeCardProps) {
     return (
         <Box
+            className="card-root"
             width={180}
             flexShrink={0}
             display="flex"
@@ -18,8 +19,11 @@ export default function EpisodeCard({ episode }: EpisodeCardProps) {
             alignItems="flex-start"
             sx={{
                 position: 'relative',
-                '&:hover .overlay-btn': { opacity: 1 },
                 cursor: 'pointer',
+                '&:hover .overlay-btn': {
+                    opacity: 1,
+                    transform: 'translate(0%, 0%)',
+                },
             }}
         >
             <Box
@@ -49,7 +53,8 @@ export default function EpisodeCard({ episode }: EpisodeCardProps) {
                         bottom: 8,
                         left: 8,
                         opacity: 0,
-                        transition: 'opacity 0.2s ease-in-out',
+                        transform: 'translate(-20%, 20%)',
+                        transition: 'opacity 0.3s ease, transform 0.3s ease',
                     }}
                 >
                     <PlayButton hover />

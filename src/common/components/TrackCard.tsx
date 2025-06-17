@@ -23,6 +23,7 @@ export default function TrackCard({ track, isLogin }: TrackCardProps) {
 
     return (
         <Box
+            className="card-root"
             width={180}
             flexShrink={0}
             display="flex"
@@ -30,9 +31,9 @@ export default function TrackCard({ track, isLogin }: TrackCardProps) {
             alignItems="flex-start"
             sx={{
                 position: 'relative',
-                '&:hover .overlay-btn': { opacity: 1 },
-                '&:hover .more-btn': { opacity: 1 },
                 cursor: 'pointer',
+                '&:hover .overlay-btn': { opacity: 1, transform: 'translate(0%, 0%)' },
+                '&:hover .more-btn': { opacity: 1 },
             }}
         >
             <Box
@@ -63,7 +64,8 @@ export default function TrackCard({ track, isLogin }: TrackCardProps) {
                         bottom: 8,
                         left: 8,
                         opacity: 0,
-                        transition: 'opacity 0.2s ease-in-out',
+                        transform: 'translate(-20%, 20%)',
+                        transition: 'opacity 0.3s ease, transform 0.3s ease',
                     }}
                 >
                     <PlayButton hover />
@@ -88,10 +90,19 @@ export default function TrackCard({ track, isLogin }: TrackCardProps) {
                 </IconButton>
             </Box>
 
-            <Typography variant="subtitle2" noWrap sx={{ mt: 1, width: '100%', textAlign: 'left' }}>
+            <Typography
+                variant="subtitle2"
+                noWrap
+                sx={{ mt: 1, width: '100%', textAlign: 'left' }}
+            >
                 {track.name}
             </Typography>
-            <Typography variant="body2" color="text.secondary" noWrap sx={{ width: '100%', textAlign: 'left' }}>
+            <Typography
+                variant="body2"
+                color="text.secondary"
+                noWrap
+                sx={{ width: '100%', textAlign: 'left' }}
+            >
                 {track.artists?.map(a => a.name).join(', ')}
             </Typography>
 

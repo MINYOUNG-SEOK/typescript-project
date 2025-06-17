@@ -11,6 +11,7 @@ interface AlbumCardProps {
 export default function AlbumCard({ album }: AlbumCardProps) {
     return (
         <Box
+            className="card-root" // ✅ 반드시 필요!
             width={180}
             flexShrink={0}
             display="flex"
@@ -18,7 +19,6 @@ export default function AlbumCard({ album }: AlbumCardProps) {
             alignItems="flex-start"
             sx={{
                 position: 'relative',
-                '&:hover .overlay-btn': { opacity: 1 },
                 cursor: 'pointer',
             }}
         >
@@ -49,7 +49,12 @@ export default function AlbumCard({ album }: AlbumCardProps) {
                         bottom: 8,
                         left: 8,
                         opacity: 0,
-                        transition: 'opacity 0.2s ease-in-out',
+                        transform: 'translate(-20%, 20%)',
+                        transition: 'opacity 0.3s ease, transform 0.3s ease',
+                        '.card-root:hover &': {
+                            opacity: 1,
+                            transform: 'translate(0%, 0%)',
+                        },
                     }}
                 >
                     <PlayButton hover />
