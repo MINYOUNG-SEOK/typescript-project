@@ -179,7 +179,7 @@ const SearchPage: React.FC = () => {
                                             sx={{
                                                 height: '100%',
                                                 width: '100%',
-                                                objectFit: 'cover',  // 비율 유지하며 꽉 채우기
+                                                objectFit: 'cover',
                                                 position: 'absolute',
                                                 top: 0,
                                                 left: 0,

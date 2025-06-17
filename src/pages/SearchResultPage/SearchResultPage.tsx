@@ -1,10 +1,12 @@
+
 import React, { useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { Box, CircularProgress, Alert } from '@mui/material';
 import { useInView } from 'react-intersection-observer';
 import useSearchItemsByKeyword from '../../hooks/useSearchItemsByKeyword';
 import { SEARCH_TYPE } from '../../models/search';
-import SearchResultList from '../PlaylistDetailPage/components/SearchResultList';
+import SearchResultList from '../SearchResultPage/components/SearchResultList';
+import { selectTopResult } from '../../utils/selectTopResult';
 
 export default function SearchResultPage() {
   const { keyword = '' } = useParams<{ keyword: string }>();
@@ -18,15 +20,31 @@ export default function SearchResultPage() {
     fetchNextPage,
     hasNextPage,
     isFetchingNextPage,
-  } = useSearchItemsByKeyword({ q, type: [SEARCH_TYPE.Track, SEARCH_TYPE.Artist, SEARCH_TYPE.Album] });
+  } = useSearchItemsByKeyword({
+    q,
+    type: [
+      SEARCH_TYPE.Track,
+      SEARCH_TYPE.Artist,
+      SEARCH_TYPE.Album,
+      SEARCH_TYPE.Playlist,
+      SEARCH_TYPE.Show,
+      SEARCH_TYPE.Episode
+    ]
+  });
 
-  const tracks = data?.pages.flatMap(p => p.tracks?.items ?? []) ?? [];
-  const artists = data?.pages.flatMap(p => p.artists?.items ?? []) ?? [];
-  const albums = data?.pages.flatMap(p => p.albums?.items ?? []) ?? [];
+  const tracks = data?.pages.flatMap(p => p.tracks?.items ?? []).filter(Boolean) ?? [];
+  const albums = data?.pages.flatMap(p => p.albums?.items ?? []).filter(Boolean) ?? [];
+  const artists = data?.pages.flatMap(p => p.artists?.items ?? []).filter(Boolean) ?? [];
+  const playlists = data?.pages.flatMap(p => p.playlists?.items ?? []).filter(Boolean) ?? [];
+  const shows = data?.pages.flatMap(p => p.shows?.items ?? []).filter(Boolean) ?? [];
+  const episodes = data?.pages.flatMap(p => p.episodes?.items ?? []).filter(Boolean) ?? [];
 
-  const topArtist = artists[0];
-  const topTrack = tracks[0];
-  const topAlbum = albums[0];
+  const topResult = selectTopResult({
+    artists,
+    tracks,
+    albums,
+    playlists
+  });
 
   const { ref, inView } = useInView();
   useEffect(() => {
@@ -56,14 +74,14 @@ export default function SearchResultPage() {
   return (
     <Box p={2} maxWidth={1400} mx="auto">
       <SearchResultList
-        topArtist={topArtist}
-        topTrack={topTrack}
-        topAlbum={topAlbum}
+        topResult={topResult}
         tracks={tracks}
-        artists={artists}
         albums={albums}
+        artists={artists.filter(a => a.id !== topResult?.data?.id)}
+        playlists={playlists}
+        shows={shows}
+        episodes={episodes}
       />
-      {/* 무한스크롤용 ref: Songs LoadMore 하단에 걸려있음 */}
       <Box ref={ref} />
     </Box>
   );

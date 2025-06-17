@@ -11,7 +11,7 @@ const useInfinitePlaylists = (limit: number = 20) => {
         queryKey: ["current-user-playlists"],
         queryFn: ({ pageParam }) =>
             getCurrentUserPlaylists({ limit, offset: pageParam }),
-        getNextPageParam: (lastPage) => {
+        getNextPageParam: (lastPage, ) => {
             const { total, offset, limit } = lastPage;
             const nextOffset = offset + limit;
             return nextOffset < total ? nextOffset : undefined;
