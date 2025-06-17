@@ -25,7 +25,16 @@ export default function MoreMenu({ anchorEl, onClose, isLogin }) {
 
     return (
         <>
-            <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={onClose}>
+            <Menu
+                anchorEl={anchorEl}
+                open={Boolean(anchorEl)}
+                onClose={onClose}
+                PaperProps={{
+                    sx: {
+                        backgroundColor: '#f2f2f2',
+                    },
+                }}
+            >
 
                 <MenuItem
                     onMouseEnter={(e) => setPlaylistAnchor(e.currentTarget)}
