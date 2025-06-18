@@ -72,7 +72,7 @@ export default function SearchResultPage() {
   }
 
   return (
-    <Box p={2} maxWidth={1400} mx="auto">
+    <Box p={2} mx="auto">
       <SearchResultList
         topResult={topResult}
         tracks={tracks}
