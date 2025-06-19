@@ -2,9 +2,11 @@ import { Box, Grid, Typography } from '@mui/material';
 import useSearchItemsByKeyword from '../../../hooks/useSearchItemsByKeyword';
 import React from 'react';
 import ErrorMessage from '../../../common/components/ErrorMessage';
-import TrackCard from '../../../common/components/TrackCard';
+import Card from '../../../common/components/Card';
 import SkeletonCard from '../../../common/components/SkeletonCard';
 import btnMoreIcon from '../../../assets/btn-more.svg';
+import { SEARCH_TYPE } from '../../../models/search';
+import { Track } from '../../../models/track';
 
 const keywords = [
     '모아나',
@@ -17,17 +19,17 @@ const keywords = [
 
 const AnimationMainTracks = () => {
     // 각 키워드별로 1곡씩만 뽑기
-    const results = keywords.map((q) => useSearchItemsByKeyword({ q, type: ['track'], limit: 3 }));
+    const results = keywords.map((q) => useSearchItemsByKeyword({ q, type: [SEARCH_TYPE.Track], limit: 3 }));
     const isLoading = results.some(r => r.isLoading);
     const error = results.find(r => r.error)?.error;
     // 각 검색 결과에서 첫 번째 곡만 추출, 중복 제거
-    const tracks = results
+    const tracks: Track[] = results
         .map(r => r.data?.pages?.[0]?.tracks?.items?.[0])
-        .filter((track): track is any => !!track && !!track.id)
+        .filter((track): track is Track => !!track && !!track.id)
         .reduce((acc, track) => {
             if (!acc.find(t => t.id === track.id)) acc.push(track);
             return acc;
-        }, [] as any[]);
+        }, [] as Track[]);
 
     if (error) {
         return <ErrorMessage errorMessage={error.message} />;
@@ -65,9 +67,13 @@ const AnimationMainTracks = () => {
                         </Grid>
                     ))
                 ) : tracks.length > 0 ? (
-                    tracks.map((track) => (
+                    tracks.map((track: Track) => (
                         <Grid size={{ xs: 6, sm: 4, md: 3, lg: 2 }} key={track.id}>
-                            <TrackCard track={track} isLogin={false} />
+                            <Card
+                                image={track.album?.images?.[0]?.url || ''}
+                                name={track.name}
+                                artistName={track.artists?.map((a: any) => a.name).join(', ')}
+                            />
                         </Grid>
                     ))
                 ) : (

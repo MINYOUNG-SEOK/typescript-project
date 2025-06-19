@@ -2,13 +2,15 @@ import { Box, Grid, Typography } from '@mui/material';
 import useSearchItemsByKeyword from '../../../hooks/useSearchItemsByKeyword';
 import React from 'react';
 import ErrorMessage from '../../../common/components/ErrorMessage';
-import TrackCard from '../../../common/components/TrackCard';
+import Card from '../../../common/components/Card';
 import SkeletonCard from '../../../common/components/SkeletonCard';
 import btnMoreIcon from '../../../assets/btn-more.svg';
+import { SEARCH_TYPE } from '../../../models/search';
+import { Track } from '../../../models/track';
 
 const SummerTracks = () => {
-    const { data, error, isLoading } = useSearchItemsByKeyword({ q: '여름', type: ['track'], limit: 6 });
-    const tracks = data?.pages?.[0]?.tracks?.items?.slice(0, 6) ?? [];
+    const { data, error, isLoading } = useSearchItemsByKeyword({ q: '여름', type: [SEARCH_TYPE.Track], limit: 6 });
+    const tracks: Track[] = data?.pages?.[0]?.tracks?.items?.slice(0, 6) ?? [];
 
     if (error) {
         return <ErrorMessage errorMessage={error.message} />;
@@ -46,9 +48,13 @@ const SummerTracks = () => {
                         </Grid>
                     ))
                 ) : tracks.length > 0 ? (
-                    tracks.map((track) => (
+                    tracks.map((track: Track) => (
                         <Grid size={{ xs: 6, sm: 4, md: 3, lg: 2 }} key={track.id}>
-                            <TrackCard track={track} isLogin={false} />
+                            <Card
+                                image={track.album?.images?.[0]?.url || ''}
+                                name={track.name}
+                                artistName={track.artists?.map((a: any) => a.name).join(', ')}
+                            />
                         </Grid>
                     ))
                 ) : (

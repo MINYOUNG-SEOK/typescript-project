@@ -50,7 +50,7 @@ export default function SearchResultList({
                         <ArtistCard artist={topResult.data as Artist} />
                     )}
                     {topResult.type === 'track' && (
-                        <TrackCard track={topResult.data as Track} />
+                        <TrackCard track={topResult.data as Track} isLogin={false} />
                     )}
                     {topResult.type === 'album' && (
                         <AlbumCard album={topResult.data as SimplifiedAlbum} />
@@ -65,7 +65,7 @@ export default function SearchResultList({
             {tracks.length > 0 && (
                 <ScrollRow title="곡">
                     {tracks.filter(track => track && track.id).slice(0, 20).map(track => (
-                        <TrackCard key={track.id} track={track} />
+                        <TrackCard key={track.id} track={track} isLogin={false} />
                     ))}
                 </ScrollRow>
             )}
