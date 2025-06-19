@@ -24,23 +24,15 @@ export default function TrackCard({ track, isLogin }: TrackCardProps) {
     return (
         <Box
             className="card-root"
-            width={180}
-            flexShrink={0}
-            display="flex"
-            flexDirection="column"
-            alignItems="flex-start"
             sx={{
                 position: 'relative',
-                cursor: 'pointer',
-                '&:hover .overlay-btn': { opacity: 1, transform: 'translate(0%, 0%)' },
-                '&:hover .more-btn': { opacity: 1 },
+                '&:hover .overlay-btn': { opacity: 1 },
             }}
         >
             <Box
                 sx={{
                     position: 'relative',
-                    width: '100%',
-                    borderRadius: 1,
+                    borderRadius: 2,
                     overflow: 'hidden',
                 }}
             >
@@ -50,13 +42,12 @@ export default function TrackCard({ track, isLogin }: TrackCardProps) {
                     alt={track.name}
                     sx={{
                         width: '100%',
-                        aspectRatio: '1',
+                        aspectRatio: '1 / 1',
                         objectFit: 'cover',
-                        borderRadius: 1,
                         display: 'block',
+                        borderRadius: 2,
                     }}
                 />
-
                 <Box
                     className="overlay-btn"
                     sx={{
@@ -64,8 +55,7 @@ export default function TrackCard({ track, isLogin }: TrackCardProps) {
                         bottom: 8,
                         left: 8,
                         opacity: 0,
-                        transform: 'translate(-20%, 20%)',
-                        transition: 'opacity 0.3s ease, transform 0.3s ease',
+                        transition: 'opacity 0.2s ease-in-out',
                     }}
                 >
                     <PlayButton hover />
@@ -90,21 +80,14 @@ export default function TrackCard({ track, isLogin }: TrackCardProps) {
                 </IconButton>
             </Box>
 
-            <Typography
-                variant="subtitle2"
-                noWrap
-                sx={{ mt: 1, width: '100%', textAlign: 'left' }}
-            >
-                {track.name}
-            </Typography>
-            <Typography
-                variant="body2"
-                color="text.secondary"
-                noWrap
-                sx={{ width: '100%', textAlign: 'left' }}
-            >
-                {track.artists?.map(a => a.name).join(', ')}
-            </Typography>
+            <Box mt={0.5}>
+                <Typography fontSize="0.9rem" fontWeight={600} noWrap>
+                    {track.name}
+                </Typography>
+                <Typography fontSize="0.8rem" color="text.secondary" noWrap>
+                    {track.artists?.map(a => a.name).join(', ')}
+                </Typography>
+            </Box>
 
             <MoreMenu
                 anchorEl={menuAnchor}
