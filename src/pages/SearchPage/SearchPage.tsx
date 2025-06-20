@@ -27,6 +27,8 @@ const HorizontalScroll = styled(Box)({
     overflowX: 'auto',
     paddingBottom: 8,
     gap: 12,
+    scrollbarWidth: 'none', // Firefox
+    '&::-webkit-scrollbar': { display: 'none' }, // Chrome, Safari
 })
 
 // 3) Chip 스타일
@@ -105,7 +107,7 @@ const SearchPage: React.FC = () => {
     }
 
     return (
-        <Box p={2} maxWidth={1400} mx="auto">
+        <Box p={0} maxWidth={1400} mx="auto">
             {/* 검색창 */}
             <SearchInput
                 value={input}
@@ -199,7 +201,16 @@ const SearchPage: React.FC = () => {
                                     >
                                         <Typography
                                             variant="h6"
-                                            sx={{ fontWeight: 700 }}
+                                            sx={{ 
+                                                fontWeight: 700, 
+                                                fontSize: { 
+                                                    xs: '1.05rem !important', 
+                                                    sm: '1.1rem !important', 
+                                                    md: '1.15rem !important', 
+                                                    lg: '1.2rem !important', 
+                                                    xl: '1.5rem !important' 
+                                                } 
+                                            }}
                                         >
                                             {cat.name}
                                         </Typography>

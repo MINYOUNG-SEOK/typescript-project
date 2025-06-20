@@ -40,7 +40,14 @@ export default function SearchResultList({
     episodes
 }: SearchResultListProps) {
     return (
-        <Box display="flex" flexDirection="column" gap={6}>
+        <Box display="flex" flexDirection="column" 
+            gap={{ xs: 2, md: 6 }}
+            sx={{
+                px: 0,
+                width: '100%',
+                maxWidth: { xs: '100%', sm: '100%', md: '100%' },
+                mx: 'auto',
+            }}>
 
             {/* 상위 결과 */}
             {topResult && (

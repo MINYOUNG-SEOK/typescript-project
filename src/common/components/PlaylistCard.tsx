@@ -12,7 +12,7 @@ export default function PlaylistCard({ playlist }: PlaylistCardProps) {
     return (
         <Box
             className="card-root" // ✅ 공통 hover selector 연결
-            width={180}
+            width={{ xs: 120, md: 180 }}
             flexShrink={0}
             display="flex"
             flexDirection="column"

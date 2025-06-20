@@ -11,7 +11,7 @@ interface ArtistCardProps {
 export default function ArtistCard({ artist }: ArtistCardProps) {
     return (
         <Box
-            width={180}
+            width={{ xs: 120, md: 180 }}
             flexShrink={0}
             display="flex"
             flexDirection="column"
@@ -27,8 +27,8 @@ export default function ArtistCard({ artist }: ArtistCardProps) {
             <Box sx={{ position: 'relative' }}>
                 <Box
                     sx={{
-                        width: 180,
-                        height: 180,
+                        width: { xs: 120, md: 180 },
+                        height: { xs: 120, md: 180 },
                         borderRadius: '50%',
                         overflow: 'hidden',
                     }}

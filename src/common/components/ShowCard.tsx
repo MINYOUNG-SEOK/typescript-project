@@ -11,7 +11,7 @@ interface ShowCardProps {
 export default function ShowCard({ show }: ShowCardProps) {
     return (
         <Box
-            width={180}
+            width={{ xs: 120, md: 180 }}
             flexShrink={0}
             display="flex"
             flexDirection="column"

@@ -11,6 +11,7 @@ import {
     DialogContent,
     DialogActions,
     TextField,
+    IconButton,
 } from "@mui/material";
 import HomeIcon from "@mui/icons-material/Home";
 import SearchIcon from "@mui/icons-material/Search";
@@ -18,6 +19,7 @@ import LibraryMusicIcon from "@mui/icons-material/LibraryMusic";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import AddIcon from "@mui/icons-material/Add";
+import CloseIcon from '@mui/icons-material/Close';
 import { motion } from "framer-motion";
 import { useInView } from "react-intersection-observer";
 
@@ -183,7 +185,14 @@ const Sidebar: React.FC<SidebarProps> = ({ open, onClose }) => {
     const content = (
         <Root width={sidebarWidth}>
             <FixedSection>
-                <Title>Lime Music</Title>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', minHeight: 56, padding: '0 0 0 0' }}>
+                    <Title sx={{ lineHeight: 1, display: 'flex', alignItems: 'center', mb: 0 }}>Lime Music</Title>
+                    {isMobile && (
+                        <IconButton onClick={onClose} sx={{ ml: 1 }}>
+                            <CloseIcon />
+                        </IconButton>
+                    )}
+                </div>
                 <NavList>
                     <li>
                         <StyledLink to="/" end onClick={onClose}>
@@ -276,7 +285,7 @@ const Sidebar: React.FC<SidebarProps> = ({ open, onClose }) => {
                 </DialogContent>
                 <DialogActions>
                     <Button onClick={() => setDialogOpen(false)}>취소</Button>
-                    <Button onClick={handleCreate} disabled={!newName.trim() || createPlaylistMutation.isLoading}>
+                    <Button onClick={handleCreate} disabled={!newName.trim() || isLoading}>
                         생성
                     </Button>
                 </DialogActions>

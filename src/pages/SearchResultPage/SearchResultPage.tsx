@@ -1,4 +1,3 @@
-
 import React, { useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { Box, CircularProgress, Alert } from '@mui/material';
@@ -72,7 +71,7 @@ export default function SearchResultPage() {
   }
 
   return (
-    <Box p={2} mx="auto">
+    <Box p={0} mx="auto">
       <SearchResultList
         topResult={topResult}
         tracks={tracks}

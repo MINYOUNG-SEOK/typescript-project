@@ -25,7 +25,7 @@ const CategoryRecommendations: React.FC = () => {
                 <Typography
                     variant="h5"
                     fontWeight="bold"
-                    sx={{ fontSize: { xs: "1.2rem", sm: "1.3rem", md: "1.4rem", lg: "1.5rem" } }}
+                    sx={{ fontSize: { xs: '1.05rem', sm: '1.1rem', md: '1.15rem', lg: '1.2rem', xl: '1.5rem' } }}
                 >
                     추천 플레이리스트
                 </Typography>

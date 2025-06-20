@@ -12,7 +12,7 @@ export default function AlbumCard({ album }: AlbumCardProps) {
     return (
         <Box
             className="card-root" // ✅ 반드시 필요!
-            width={180}
+            width={{ xs: 120, md: 180 }}
             flexShrink={0}
             display="flex"
             flexDirection="column"

@@ -45,18 +45,17 @@ export default function ScrollRow({ title, children }: ScrollRowProps) {
         <Box mb={4} position="relative">
             <Typography variant="h6" mb={2}>{title}</Typography>
 
-            {/* 왼쪽 그라데이션 + 화살표 */}
+            {/* 왼쪽 화살표 (PC에서만) */}
             {canScrollLeft && (
                 <Box
                     sx={{
+                        display: { xs: 'none', md: 'flex' },
                         position: 'absolute',
                         top: 0,
                         bottom: 0,
                         left: 0,
-                        width: 80,
-                        background: 'linear-gradient(to right, rgba(255,255,255,1) 30%, transparent 100%)',
+                        width: 48,
                         zIndex: 2,
-                        display: 'flex',
                         alignItems: 'center',
                     }}
                 >
@@ -64,27 +63,27 @@ export default function ScrollRow({ title, children }: ScrollRowProps) {
                         onClick={() => scrollBy(-300)}
                         sx={{
                             color: '#000',
-                            background: 'transparent',
+                            background: 'rgba(255,255,255,0.8)',
                             ml: 1,
+                            boxShadow: 1,
                         }}
                     >
-                        <ChevronLeftIcon sx={{ fontSize: 48 }} />
+                        <ChevronLeftIcon sx={{ fontSize: 36 }} />
                     </IconButton>
                 </Box>
             )}
 
-            {/* 오른쪽 그라데이션 + 화살표 */}
+            {/* 오른쪽 화살표 (PC에서만) */}
             {canScrollRight && (
                 <Box
                     sx={{
+                        display: { xs: 'none', md: 'flex' },
                         position: 'absolute',
                         top: 0,
                         bottom: 0,
                         right: 0,
-                        width: 80,
-                        background: 'linear-gradient(to left, rgba(255,255,255,1) 30%, transparent 100%)',
+                        width: 48,
                         zIndex: 2,
-                        display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'flex-end',
                     }}
@@ -93,11 +92,12 @@ export default function ScrollRow({ title, children }: ScrollRowProps) {
                         onClick={() => scrollBy(300)}
                         sx={{
                             color: '#000',
-                            background: 'transparent',
+                            background: 'rgba(255,255,255,0.8)',
                             mr: 1,
+                            boxShadow: 1,
                         }}
                     >
-                        <ChevronRightIcon sx={{ fontSize: 48 }} />
+                        <ChevronRightIcon sx={{ fontSize: 36 }} />
                     </IconButton>
                 </Box>
             )}

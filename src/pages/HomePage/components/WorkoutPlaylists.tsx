@@ -6,12 +6,25 @@ import Card from '../../../common/components/Card';
 import SkeletonCard from '../../../common/components/SkeletonCard';
 import btnMoreIcon from '../../../assets/btn-more.svg';
 
+const keywords = ['요가', '스트레칭'];
+
 const WorkoutPlaylists = () => {
-    // 운동 관련 플레이리스트 20개 받아서 조건에 맞는 6개만 보여줌
-    const { data, error, isLoading } = useSearchItemsByKeyword({ q: '운동', type: ['playlist'], limit: 20 });
-    const playlists = data?.pages?.[0]?.playlists?.items?.filter(
+    // 각 키워드별로 10개씩 받아와서 합치고, 조건에 맞는 6개만 보여줌 (중복 제거)
+    const results = keywords.map((q) => useSearchItemsByKeyword({ q, type: ['playlist'], limit: 10 }));
+    const isLoading = results.some(r => r.isLoading);
+    const error = results.find(r => r.error)?.error;
+    // 모든 검색 결과 합치고, 조건 필터 + id 기준 중복 제거, 6개만
+    const allPlaylists = results.flatMap(r => r.data?.pages?.[0]?.playlists?.items ?? []);
+    const filtered = allPlaylists.filter(
         pl => pl && Array.isArray(pl.images) && pl.images.length > 0 && pl.name && pl.owner
-    )?.slice(0, 6) ?? [];
+    );
+    const uniquePlaylists = Array.from(
+        filtered.reduce((map, pl) => {
+            if (pl && pl.id) map.set(pl.id, pl);
+            return map;
+        }, new Map()),
+        ([, pl]) => pl
+    ).slice(0, 6);
 
     if (error) {
         return <ErrorMessage errorMessage={error.message} />;
@@ -32,7 +45,7 @@ const WorkoutPlaylists = () => {
                         },
                     }}
                 >
-                    운동할 때 듣기 좋은 플레이리스트
+                    요가/스트레칭할 때 듣기 좋은 플레이리스트
                 </Typography>
                 <img
                     src={btnMoreIcon}
@@ -48,8 +61,8 @@ const WorkoutPlaylists = () => {
                             <SkeletonCard />
                         </Grid>
                     ))
-                ) : playlists.length > 0 ? (
-                    playlists.map((pl) => (
+                ) : uniquePlaylists.length > 0 ? (
+                    uniquePlaylists.map((pl) => (
                         <Grid size={{ xs: 6, sm: 4, md: 3, lg: 2 }} key={pl.id}>
                             <Card
                                 image={pl.images?.[0]?.url || ''}

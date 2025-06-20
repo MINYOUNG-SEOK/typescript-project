@@ -12,7 +12,7 @@ export default function EpisodeCard({ episode }: EpisodeCardProps) {
     return (
         <Box
             className="card-root"
-            width={180}
+            width={{ xs: 120, md: 180 }}
             flexShrink={0}
             display="flex"
             flexDirection="column"
